@@ -1,0 +1,201 @@
+<?php
+
+/*
+  FUNKTIONIERT NUR WENN INIT BEREITS ERFOLGT IST!!!
+*/
+
+/**
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  margin-top: 0;
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-top: 0;
+
+*/
+
+echo "
+
+<style type='text/css'>
+
+*
+{
+ background-position: 0px 0px;
+ background-position:fixed;
+ background-repeat:no-repeat;
+ font-family:Arial;
+}
+
+body
+{
+  oncontextmenu:return false;
+  background-color:" .$COLORS['background'] .";
+  color: " .$COLORS['text'] .";
+}
+
+body.popupbody
+{
+  background-image:url(pics/bg_muster.png);
+  background-position: 0px 0px;
+}
+
+body.indexbody
+{
+  background-image:url(" .$PUBLICVARS['background_pic'] .");
+  background-repeat:" .$PUBLICVARS['background_repeat'].";
+}
+
+
+table
+{
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  line-height: 99%;
+}
+
+
+tr
+{
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+
+
+th
+{
+  color:" .$COLORS['titel'] .";
+  font-style:normal;
+  font-weight:bolder;  
+}
+
+
+
+
+td.panelTitle
+{ 
+  background-color: green;
+}
+
+
+td.panelBody
+{
+  background-color: blue;
+}
+
+td
+{
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+}
+
+td.tabbedPaneTab
+{
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+    margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+
+div
+{
+}
+
+
+a
+{
+  font-style:normal;
+  text-decoration:none;
+}
+
+a:link 
+{
+  color:" .$COLORS['link'] .";
+}
+
+a:visited 
+{
+  color:" .$COLORS['link'] .";
+}
+
+a:active 
+{
+  color:" .$COLORS['link'] .";
+}
+
+a:hover
+{
+  color:" .$COLORS['hover'] .";
+}
+
+
+hr
+{
+  color:" .$COLORS['text'] .";
+  padding-left: 0;
+  padding-right: 0;
+  padding-bottom: 0;
+  padding-top: 0;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+
+}
+
+
+
+p
+{
+  padding: 0px 0px 0px 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+
+img
+{
+  padding: 0px 0px 0px 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+}
+
+
+.shakeimage{
+  position:relative
+}
+
+
+</style>
+";
+
+?>

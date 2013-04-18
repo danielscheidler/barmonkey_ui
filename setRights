@@ -1,0 +1,24 @@
+####################################################################
+#                                                                  #
+#    Script zum setzen der Verzeichniss-/Dateirechte der           #
+#    Stadtplan - Umgebung                                          #
+#                                                                  #
+#    MUSS IM HTTPDOCS LIEGEN!                                      #
+#                         (c) by Daniel Scheidler Dezember 2008    #
+####################################################################
+#
+# Rechte global ändern
+#--------------------------------------
+chown stadtplan:psaserv * -R    >> stadtplantest2stadtplan.log
+#
+# Schreibrechte setzen wo nötig
+#--------------------------------------
+chmod 777 tmp/ -R                  >> stadtplantest2stadtplan.log
+chmod 777 pics/user/ -R            >> stadtplantest2stadtplan.log
+chmod 777 pics/angebote/ -R        >> stadtplantest2stadtplan.log
+chmod 777 pics/institutionen/ -R   >> stadtplantest2stadtplan.log
+chmod 777 pics/testberichte/ -R    >> stadtplantest2stadtplan.log
+chmod 777 pics/berichte/ -R        >> stadtplantest2stadtplan.log
+chmod 777 pics/news/ -R            >> stadtplantest2stadtplan.log
+#
+chmod 777 counter.txt              >> stadtplantest2stadtplan.log
