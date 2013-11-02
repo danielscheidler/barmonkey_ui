@@ -63,6 +63,9 @@ class DbTable extends Object {
     private $initialized;
 
     private $DEFAULT_HIDDEN_FIELDS;
+    
+    private $EDITOR_ACTIVE;
+    private $EDITOR_WIDTH;
 
     /**
      * DbTable($con, $tbname="", $cols=array("*"), $labels="", $defaults="", $o="", $w="")
@@ -92,6 +95,10 @@ class DbTable extends Object {
         $this->setOrderBy($o);
         $this->MAX_ROWS_TO_FETCH = getPageConfigParam($_SESSION['config']->DBCONNECT,
             "max_rowcount_for_dbtable");
+            
+        $this->EDITOR_ACTIVE = true;
+        $this->EDITOR_WIDTH  = round(165 / count($this->COLNAMES), 0);
+        
 
         $this->setLimitActive(false);
 
@@ -180,6 +187,24 @@ class DbTable extends Object {
         $this->initialized = true;
 
         $this->refresh();
+    }
+
+
+    function setEditorActive($bool){
+        $this->EDITOR_ACTIVE = $bool;
+    }
+
+    function isEditorActive(){
+        return $this->EDITOR_ACTIVE;
+    }
+
+
+    function setEditorWidth($width){
+        $this->EDITOR_WIDTH = $width;
+    }
+
+    function getEditorWidth(){
+        return $this->EDITOR_WIDTH;
     }
 
 
@@ -1169,7 +1194,7 @@ class DbTable extends Object {
                 if ($i != count($tNames) - 1) {
                     $tmpW[$i] = "";
                 } else {
-                    $tmpW[$i] = "125";
+                    $tmpW[$i] = "120";
                 }
             }
             $table->setColSizes($tmpW);
@@ -1276,7 +1301,7 @@ class DbTable extends Object {
             }
 
             $div = new Div();
-            $div->setWidth(120);
+            $div->setWidth(130);
             $div->setOverflow("visible");
 
             //bearbeiten Link
@@ -1322,7 +1347,6 @@ class DbTable extends Object {
         $tNames = $this->LABELS;
         $colNames = $this->COLNAMES;
 
-
         if ($this->isDeleteInUpdate()) {
             $this->doDeleteFromUpdatemask();
             array_push($colNames, "entfernen");
@@ -1331,7 +1355,7 @@ class DbTable extends Object {
 
         $table = new Table($tNames);
         $table->setHeadEnabled(true);
-
+        
         if ($this->WIDTH > 0) {
             $table->setWidth($this->WIDTH);
         }
@@ -1371,6 +1395,9 @@ class DbTable extends Object {
         $bgCtr = 1;
         for ($ir = 1; $ir <= count($this->ROWS); $ir++) {
             $r = $table->createRow();
+            $r->setStyle("padding","5px");
+            $r->setStyle("vertical-align","middle");
+
             $rowId = $this->ROWS[$ir]->getAttribute(count($this->COLNAMES));
 
             $r->setBackgroundColor($_SESSION['config']->COLORS['Tabelle_Hintergrund_' . $bgCtr]);
@@ -1419,11 +1446,10 @@ class DbTable extends Object {
 
                 } else {
 
-
                     if (mysql_field_type($result, $ia) == "blob") {
                         $t = new TextArea($fieldName . $rowId, $row->getNamedAttribute($colNames[$ia]),
-                            round(165 / count($this->COLNAMES), 0), 4);
-                        $t->setTextEditor(true);
+                            $this->getEditorWidth(), 4);
+                        $t->setTextEditor($this->isEditorActive());
                     } else
                         if (strpos(mysql_field_flags($result, $ia), "enum") > 0) {
                             $ev = $this->getEnumValues($fieldName);
