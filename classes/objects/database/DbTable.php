@@ -1448,8 +1448,9 @@ class DbTable extends Object {
 
                     if (mysql_field_type($result, $ia) == "blob") {
                         $t = new TextArea($fieldName . $rowId, $row->getNamedAttribute($colNames[$ia]),
-                            $this->getEditorWidth(), 4);
+                        $this->getEditorWidth(), 4);
                         $t->setTextEditor($this->isEditorActive());
+                        $t->setReadOnly(strpos($this->READONLYCOLS, $fieldName)>0);
                     } else
                         if (strpos(mysql_field_flags($result, $ia), "enum") > 0) {
                             $ev = $this->getEnumValues($fieldName);
@@ -1468,7 +1469,7 @@ class DbTable extends Object {
                         } else
                             if (mysql_field_type($result, $ia) == "int") {
                                 $t = new TextField($fieldName . $rowId, $row->getNamedAttribute($colNames[$ia]),
-                                    $fieldLen, $maxLen);
+                                    $fieldLen, $maxLen, strpos($this->READONLYCOLS, $fieldName)>0);
 
                             } else
                                 if (mysql_field_type($result, $ia) == "date") {
@@ -1479,11 +1480,11 @@ class DbTable extends Object {
                                 } else
                                     if (mysql_field_type($result, $ia) == "timestamp") {
                                         $t = new TextField($fieldName . $rowId, $row->getNamedAttribute($colNames[$ia]),
-                                            $fieldLen, $maxLen);
+                                            $fieldLen, $maxLen, strpos($this->READONLYCOLS, $fieldName)>0);
 
                                     } else {
                                         $t = new TextField($fieldName . $rowId, $row->getNamedAttribute($colNames[$ia]),
-                                            $fieldLen, $maxLen);
+                                            $fieldLen, $maxLen, strpos($this->READONLYCOLS, $fieldName)>0);
                                     }
 
                                     $arrChk = array_search($fieldName, $this->READONLYCOLS);
@@ -1619,14 +1620,14 @@ class DbTable extends Object {
 
                                 } else
                                     if (mysql_field_type($result, $i) == "int") {
-                                        $o = new TextField($fieldName . $rowId, $val);
+                                        $o = new TextField($fieldName . $rowId, $val, 30, 50, strpos($this->READONLYCOLS, $fieldName)>0);
 
                                     } else
                                         if (mysql_field_type($result, $i) == "timestamp") {
-                                            $o = new TextField($fieldName . $rowId, $val);
+                                            $o = new TextField($fieldName . $rowId, $val, 30, 50, strpos($this->READONLYCOLS, $fieldName)>0);
 
                                         } else {
-                                            $o = new TextField($fieldName . $rowId, $val);
+                                            $o = new TextField($fieldName . $rowId, $val, 30, 50, strpos($this->READONLYCOLS, $fieldName)>0);
                                         }
 
                 } else {

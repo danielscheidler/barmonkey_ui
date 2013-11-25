@@ -48,7 +48,7 @@ $GrpPanel = new DivByInclude(getRunlinkParam($_SESSION['config']->DBCONNECT,
     "rezeptgruppen", "link"), false);
 $GrpPanel->setBackgroundColor($_SESSION['config']->COLORS['panel_background']);
 $GrpPanel->setBorder(0);
-$GrpPanel->setOverflow("suto");
+$GrpPanel->setOverflow("auto");
 $GrpPanel->setWidth($_SESSION['grouppanelwidth']);
 
 

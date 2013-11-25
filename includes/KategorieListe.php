@@ -1,5 +1,5 @@
 <?PHP
 
-$katList = new KategorieListe();
+$katList = new KategorieListe(false);
 $katList->show();
 ?>

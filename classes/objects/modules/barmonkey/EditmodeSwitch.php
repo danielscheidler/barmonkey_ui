@@ -13,14 +13,22 @@ class EditmodeSwitch extends Object {
 
 
     function show() {
+        $retAdd = "";
+        if($_REQUEST['showRezept']){
+          $retAdd =  "&editRezept=".$_REQUEST['showRezept'];
+        }
+        if($_REQUEST['editRezept']){
+          $retAdd =  "&showRezept=".$_REQUEST['editRezept'];
+        }
+        
         if ($_SESSION['config']->CURRENTUSER->STATUS == "admin") {
             $lnkTxt = new Text("Edit-Mode aktivieren", 4, true);
-            $lnkUrl = "?run=editCocktails";
+            $lnkUrl = "?run=editCocktails".$retAdd;
 
             if ($_SESSION['runLink'] == "editCocktails") {
                 // Edit-Modus aktiv
                 $lnkTxt = new Text("Edit-Mode deaktivieren", 4, true);
-                $lnkUrl = "?run=start";
+                $lnkUrl = "?run=start".$retAdd;
             }
 
             $lnk = new Link($lnkUrl, $lnkTxt);
