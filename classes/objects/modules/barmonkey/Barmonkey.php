@@ -175,8 +175,7 @@ class Barmonkey extends Object {
             $txt = new Text($beschreibung, 2);
             $txt->show();
 
-            $spacer = new Spacer(20);
-            $spacer->show();
+            
         }
 
 
@@ -215,12 +214,27 @@ class Barmonkey extends Object {
         // ---------------------
         // Rezept-Liste anzeigen
         // ---------------------
-        foreach ($this->REZEPTE as $rezept) {
+        $rezeptTbl = new Table(array(""));
+        $rezeptTbl->addSpacer(0, 20);
+        $rezeptTbl->addSpacer(1, 4);
 
-            if (!isset($_REQUEST[$urlParamName]) || ($_REQUEST[$urlParamName] == $rezept->
-                getId())) {
+        $cnt       = 0;
+        foreach ($this->REZEPTE as $rezept) {
+            if (!isset($_REQUEST[$urlParamName]) || ($_REQUEST[$urlParamName] == $rezept->getId())) {
                 $lnk = $rezept->getDetailLink($urlParamName);
-                $lnk->show();
+
+                $r = $rezeptTbl->createRow();
+                $r->setAttribute(0, $lnk);
+                if ($cnt % 2 == 0) {
+                    $r->setStyle("background-color", "#777777");
+                } else {
+                    $r->setStyle("background-color", "#555555");
+                }
+                $r->setStyle("vertical-align", "middle");
+
+                $rezeptTbl->addRow($r);
+
+                $cnt++;
             }
 
             // Falls DetailLink angeklickt wurde,
@@ -255,12 +269,12 @@ class Barmonkey extends Object {
             }
         }
 
-        $tblGrp = new Table(array(""));
-        $tblGrp->setStyle("padding-left", "15px");
-        $tblGrp->setStyle("padding-right", "15px");
+        if($cnt>0){
+            $rezeptTbl->addSpacer(1, 4);
 
-        $tblGrp->addSpacer(1, 0);
-        $tblGrp->show();
+            $rezeptTbl->show();
+        }
+        
 
         echo "</center>";
     }

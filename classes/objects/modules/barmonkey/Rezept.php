@@ -214,7 +214,7 @@ class Rezept extends Object {
         foreach ($zutaten as $zutat) {
             if ($zutat->isAngeschlossen() && !$zutat->isManuell()) {
                 if ($ret != "") {
-                    $ret .= ", ";
+                    $ret .= ",";
                 }
 
                 $ret .= $zutat->getId() . ":" . $zutat->getMenge();
@@ -368,9 +368,8 @@ class Rezept extends Object {
         $tbl->setStyle("padding-left", "15px");
         $tbl->setStyle("padding-right", "15px");
 
-        $tbl->addSpacer(1, 0);
-
         $rowTtl = $tbl->createRow();
+        $rowTtl->setStyle("vertical-align", "middle");
         $rowTtl->setAttribute(0, "BILD");
         $rowTtl->setAttribute(1, $lnk);
         $rowTtl->setAttribute(2, new Text("[fett]Zutaten: [/fett]\n\r[italian]" . $this->
@@ -522,23 +521,13 @@ class Rezept extends Object {
         $tbl->setAlignments(array("left", "right"));
 
         // Name
-        $ttl = new Title($this->getName() . " bestätigt", 0, 5);
+        $ttl = new Title($this->getName() . " abgefüllt", 0, 5);
         $rowTtl = $tbl->createRow();
         $rowTtl->setSpawnAll(true);
         $rowTtl->setAttribute(0, $ttl);
         $tbl->addRow($rowTtl);
 
-        // Preis
-        $rowPreis = $tbl->createRow();
-        $rowPreis->setSpawnAll(true);
-        $rowPreis->setAlign("right");
-        $rowPreis->setStyle("padding-left", "10px");
-        $rowPreis->setStyle("padding-right", "10px");
-        $rowPreis->setAttribute(0, new Text("[fett]Preis:[/fett] " . $this->getPreis() .
-            " Euro", 4));
-        $tbl->addSpacer(1, 15);
-        $tbl->addRow($rowPreis);
-        $tbl->addSpacer(0, 15);
+        $tbl->addSpacer(1, 24);
 
         // Nachbereitung
         $rowNachbereitungTtl = $tbl->createRow();
@@ -622,11 +611,13 @@ class Rezept extends Object {
         $tbl->setAlignments(array("left", "right"));
 
         // Name
-        $ttl = new Title($this->getName() . " zubereiten.", 0, 5);
+        $ttl = new Title($this->getName() . " zubereiten", 0, 5);
         $rowTtl = $tbl->createRow();
         $rowTtl->setSpawnAll(true);
         $rowTtl->setAttribute(0, $ttl);
         $tbl->addRow($rowTtl);
+
+        $tbl->addSpacer(1, 24);
 
         // Preis
         $rowPreis = $tbl->createRow();
@@ -636,7 +627,6 @@ class Rezept extends Object {
         $rowPreis->setStyle("padding-right", "10px");
         $rowPreis->setAttribute(0, new Text("[fett]Preis:[/fett] " . $this->getPreis() .
             " Euro", 5));
-        $tbl->addSpacer(1, 15);
         $tbl->addRow($rowPreis);
         $tbl->addSpacer(0, 15);
 
@@ -731,6 +721,7 @@ class Rezept extends Object {
         $tbl = new Table(array("", ""));
         $tbl->setColSizes(array(150));
         $tbl->setAlignments(array("left", "right"));
+        
 
         // Name
         $ttl = new Title($this->getName(), 0, 5);
@@ -738,6 +729,8 @@ class Rezept extends Object {
         $rowTtl->setSpawnAll(true);
         $rowTtl->setAttribute(0, $ttl);
         $tbl->addRow($rowTtl);
+
+        $tbl->addSpacer(1, 24);
 
         // Bild und Zutaten
         $img = $this->getImage();
