@@ -94,7 +94,15 @@ if (isset($_REQUEST['run']) && strlen($_REQUEST['run']) > 0) {
         //KEIN ZIEL ANGEGEBEN -> KEIN ALTES ZIEL VORHANDEN    Default: start
         $run = $RUNLINKS->getLinkByName("start");
         $_SESSION['runLink'] = "start";
-    }
+}
+    
+
+if(isset($_REQUEST['changeGroup']) && $_SESSION['runLink']!="start" && $_SESSION['runLink']!="editCocktails"){
+    $run = $RUNLINKS->getLinkByName("start");
+    $_SESSION['runLink'] = "start";
+}
+
+
 
 
 //Wurde ein Link gefunden wird dieser Wert im entsprechenden Ziel aktualisiert
