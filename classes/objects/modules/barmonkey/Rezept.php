@@ -248,7 +248,7 @@ class Rezept extends Object {
                     $ret .= ",";
                 }
 
-                $ret .= $zutat->getId() . ":" . $zutat->getMenge();
+                $ret .= $zutat->getAnschluss() . ":" . $zutat->getMenge();
             }
         }
 
@@ -515,7 +515,7 @@ class Rezept extends Object {
         $tblPrepareBtn->addRow( $rowPrepare );
 
         $CancleLnk = new Link( "?showRezept=" . $this->getId() . "&starteZubereitung=" . $this->getId() .
-            "&VorbereitungPruefen=" . $this->getId(), $tblPrepareBtn );
+            "&VorbereitungPruefen=" . $this->getId(), $tblPrepareBtn, false, "", "document.arduinoSwitch.location.href='http://" .$_SESSION['config']->PUBLICVARS['arduino_url']."/zubereiten?RezeptId=".$this->getId() ."';" );
 
         return $CancleLnk;
     }
@@ -579,7 +579,7 @@ class Rezept extends Object {
 
         $tbl->addSpacer( 0, 10 );
 
-        $msg = "Sobald der Vorgang abgeschlossen ist (Grüne LED), können Sie das Glas bzw den Shaker von der Wage entnehmen. \r\n ";
+        $msg = "Sobald der Vorgang abgeschlossen ist, können Sie das Glas bzw den Shaker von der Wage entnehmen. \r\n ";
         $rowBeschreibung1 = $tbl->createRow();
         $rowBeschreibung1->setSpawnAll( true );
         $rowBeschreibung1->setStyle( "padding-left", "10px" );
