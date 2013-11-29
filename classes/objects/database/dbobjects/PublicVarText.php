@@ -1,63 +1,64 @@
 <?php
+
 //FileNAME: PublicVarText.php
- 
+
 class PublicVarText extends Object {
-  var $TBL;
-  var $BORDER;
+    var $TBL;
+    var $BORDER;
 
-  function PublicVarText($dbConnect, $group, $name) {
-     $this->BORDER = 0;
-     $a = getPublicVarArray($dbConnect, $group, $name);
-     $t = new Table(array(""));
+    function PublicVarText( $dbConnect, $group, $name ) {
+        $this->BORDER = 0;
+        $a = getPublicVarArray( $dbConnect, $group, $name );
+        $t = new Table( array( "" ) );
 
-     $t->setBorder($this->BORDER);
+        $t->setBorder( $this->BORDER );
 
-     foreach($a as $title=>$text){
-       $r1 = $t->createRow();
-       $r1->setAttribute(0, new Title($title));
-       $r1->setHeader(true);
+        foreach ( $a as $title => $text ) {
+            $r1 = $t->createRow();
+            $r1->setAttribute( 0, new Title( $title ) );
+            $r1->setHeader( true );
 
-       $t->addRow($r1);
+            $t->addRow( $r1 );
 
-       $r2 = $t->createRow();
-       $r2->setAttribute(0, $text);
-	   $t->addRow($r2);
-      
-       $t->addSpacer(); 
-     }     
-    
-     $this->TBL = $t;
-  }
+            $r2 = $t->createRow();
+            $r2->setAttribute( 0, $text );
+            $t->addRow( $r2 );
+
+            $t->addSpacer();
+        }
+
+        $this->TBL = $t;
+    }
 
 
-  function setBorder($b){
-    $this->TBL->setBorder($b);
-    $this->BORDER = $b;
-  }
+    function setBorder( $b ) {
+        $this->TBL->setBorder( $b );
+        $this->BORDER = $b;
+    }
 
-  function setWidth($b){
-    $this->TBL->setWidth($b);
-    $this->WIDTH = $b;
-  }
-  
-  function setHeight($b){
-    $this->TBL->setHeight($b);
-    $this->HEIGHT = $b;
-  }
+    function setWidth( $b ) {
+        $this->TBL->setWidth( $b );
+        $this->WIDTH = $b;
+    }
 
-  function setSpacing($b){
-    $this->TBL->setSpacing($b);
-    $this->SPACING = $b;
-  }
+    function setHeight( $b ) {
+        $this->TBL->setHeight( $b );
+        $this->HEIGHT = $b;
+    }
 
-  function setPadding($b){
-    $this->TBL->setPadding($b);
-    $this->PADDING = $b;
-  }
+    function setSpacing( $b ) {
+        $this->TBL->setSpacing( $b );
+        $this->SPACING = $b;
+    }
 
-  function show(){
-     $this->TBL->show();
-  }
+    function setPadding( $b ) {
+        $this->TBL->setPadding( $b );
+        $this->PADDING = $b;
+    }
+
+    function show() {
+        $this->TBL->show();
+    }
 
 }
 

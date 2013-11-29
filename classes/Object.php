@@ -178,10 +178,10 @@ class Object extends Style {
   }
   function setPadding($y){
     $this->PADDING  = $y;
-    $this->setStyle("padding-top","5px");
-    $this->setStyle("padding-bottom","5px");
-    $this->setStyle("padding-right","5px");
-    $this->setStyle("padding-left","5px");
+    $this->setStyle("padding-top",$y."px");
+    $this->setStyle("padding-bottom",$y."px");
+    $this->setStyle("padding-right",$y."px");
+    $this->setStyle("padding-left",$y."px");
   }
 
   function getPadding(){
@@ -191,6 +191,10 @@ class Object extends Style {
     $this->SPACING  = $y;
   }
   function setStyleclass($y){
+    $this->STYLECLASS = $y;
+  }
+  
+  function setClass($y){
     $this->STYLECLASS = $y;
   }
  

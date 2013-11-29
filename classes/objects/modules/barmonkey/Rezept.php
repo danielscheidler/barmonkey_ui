@@ -103,15 +103,15 @@ class Rezept extends Object {
     function getImage() {
         // Standard-Rückgabe
         $img = new Text( "no pic" );
-        
-        if ( is_file( "/var/www/".$this->REZEPTE_ROW->getNamedAttribute( 'pic' ) ) ) {
-          // Wenn vorhanden, eigenes Bild verwenden.
+
+        if ( is_file( "/var/www/" . $this->REZEPTE_ROW->getNamedAttribute( 'pic' ) ) ) {
+            // Wenn vorhanden, eigenes Bild verwenden.
             $img = new Image( $this->REZEPTE_ROW->getNamedAttribute( 'pic' ) );
         } else {
-          // Wenn kein eigenes Bild vorhanden ist, in der Gruppe suchen.
+            // Wenn kein eigenes Bild vorhanden ist, in der Gruppe suchen.
             $gruppe = $this->getRezeptGruppe();
-            
-            if (is_file("/var/www/".$gruppe->getPic() )){
+
+            if ( is_file( "/var/www/" . $gruppe->getPic() ) ) {
                 $img = $gruppe->getImage( $gruppe->getPic() );
             }
         }
@@ -120,21 +120,15 @@ class Rezept extends Object {
     }
 
 
-    function getRezeptGruppe(){
-        $rezepteGrpDbTbl = new DbTable( $_SESSION['config']->DBCONNECT,
-                                        'rezept_gruppen',
-                                        array( "id", "name", "beschreibung", "pic" ), 
-                                        "", 
-                                        "", 
-                                        "",
-                                        "id=".$this->getRezeptGruppenId());
-        
-        
-        $gruppe = new RezeptGruppe($rezepteGrpDbTbl->getRow(1));
-        
+    function getRezeptGruppe() {
+        $rezepteGrpDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen', array( "id",
+            "name", "beschreibung", "pic" ), "", "", "", "id=" . $this->getRezeptGruppenId() );
+
+
+        $gruppe = new RezeptGruppe( $rezepteGrpDbTbl->getRow( 1 ) );
+
         return $gruppe;
     }
-
 
 
     /**
@@ -159,14 +153,13 @@ class Rezept extends Object {
             return $ret;
         }
 
-        $zutatenDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'zutaten', array( "id",
-            "name", "beschreibung", "prozente", "cl_preis", "manuell",
+        $zutatenDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'zutaten', array( "id", "name",
+            "beschreibung", "prozente", "cl_preis", "manuell",
             "(select menge from zutaten_zuordnung  WHERE zutaten.id = zutaten_zuordnung.zutat_id " .
             "AND zutaten_zuordnung.rezept_id=" . $this->getId() . ") menge " ),
             "Name, Prozente, Preis je cl, Nur Manuell", "", "manuell",
-            "exists(SELECT 'x' FROM zutaten_zuordnung WHERE " .
-            "zutaten.id = zutaten_zuordnung.zutat_id " . "AND zutaten_zuordnung.rezept_id=" .
-            $this->getId() . ") " );
+            "exists(SELECT 'x' FROM zutaten_zuordnung WHERE " . "zutaten.id = zutaten_zuordnung.zutat_id " .
+            "AND zutaten_zuordnung.rezept_id=" . $this->getId() . ") " );
 
         foreach ( $zutatenDbTbl->ROWS as $zutatRow ) {
             $zutat = new Zutat( $zutatRow );
@@ -336,13 +329,13 @@ class Rezept extends Object {
      * @return Div
      */
     function getZutatenZuordnung() {
-        $rezepteDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'zutaten_zuordnung',
-            array( "zutat_id", "menge", "rezept_id" ), "Zutat, Menge (ml)", "rezept_id = " .
-            $this->getId(), "", "rezept_id=" . $this->getId() );
+        $rezepteDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'zutaten_zuordnung', array( "zutat_id",
+            "menge", "rezept_id" ), "Zutat, Menge (ml)", "rezept_id = " . $this->getId(), "", "rezept_id=" . $this->getId
+            () );
 
         $rezepteDbTbl->setReadOnlyCols( array( "rezept_id" ) );
-        if ( isset( $_REQUEST['DbTableUpdate' . $rezepteDbTbl->TABLENAME] ) && $_REQUEST['DbTableUpdate' .
-            $rezepteDbTbl->TABLENAME] == "Speichern" ) {
+        if ( isset( $_REQUEST['DbTableUpdate' . $rezepteDbTbl->TABLENAME] ) && $_REQUEST['DbTableUpdate' . $rezepteDbTbl->TABLENAME] ==
+            "Speichern" ) {
 
             $rezepteDbTbl->doUpdate();
         }
@@ -352,12 +345,11 @@ class Rezept extends Object {
 
         if ( isset( $_REQUEST['dbTableNewZutat'] ) ) {
 
-            if ( isset( $_REQUEST['InsertIntoDB' . $rezepteDbTbl->TABLENAME] ) && $_REQUEST['InsertIntoDB' .
-                $rezepteDbTbl->TABLENAME] == "Speichern" ) {
+            if ( isset( $_REQUEST['InsertIntoDB' . $rezepteDbTbl->TABLENAME] ) && $_REQUEST['InsertIntoDB' . $rezepteDbTbl->TABLENAME] ==
+                "Speichern" ) {
 
-                $rezepteDbTblInsert = new DbTable( $_SESSION['config']->DBCONNECT,
-                    'zutaten_zuordnung', array( "zutat_id", "menge", "rezept_id" ),
-                    "Zutat, Menge (ml), Rezept", "rezept_id = " . $this->getId(), "", "" );
+                $rezepteDbTblInsert = new DbTable( $_SESSION['config']->DBCONNECT, 'zutaten_zuordnung', array( "zutat_id",
+                    "menge", "rezept_id" ), "Zutat, Menge (ml), Rezept", "rezept_id = " . $this->getId(), "", "" );
 
                 $rezepteDbTblInsert->doInsert();
 
@@ -397,18 +389,24 @@ class Rezept extends Object {
      * @param string $urlParamName
      * @return Table
      */
-    function getDetailLink( $urlParamName = "showRezept" ) {
+    function getDetailLink( $urlParamName = "showRezept" , $className="NormalListRow1") {
         $ttl = new Text( $this->getName(), 4 );
 
         $tbl = new Table( array( "", "", "", "" ) );
-        $tbl->setColSizes( array( 90, 5, 240 ) );
+        $tbl->setPadding(5);
+
+        $tbl->setColSizes( array( 90, 5, 280 ) );
         $tbl->setStyle( "padding-left", "15px" );
         $tbl->setStyle( "padding-right", "15px" );
 
         $rowTtl = $tbl->createRow();
+        $rowTtl->setClass($className);
+        $rowTtl->setMouseOver("this.className='HoverListRow'");
+        $rowTtl->setMouseOut("this.className='".$className."'");
+
         $rowTtl->setStyle( "vertical-align", "middle" );
         $img = $this->getImage();
-        $img->setWidth(80);
+        $img->setWidth( 80 );
         $rowTtl->setAttribute( 0, $img );
         $rowTtl->setAttribute( 1, " " );
         $rowTtl->setAttribute( 2, $ttl );
@@ -417,7 +415,7 @@ class Rezept extends Object {
         $tbl->addRow( $rowTtl );
 
         $lnk = new Link( "?" . $urlParamName . "=" . $this->getId(), $tbl );
-        
+
         return $lnk;
     }
 
@@ -490,8 +488,7 @@ class Rezept extends Object {
         $rowPrepare->setAttribute( 0, $zubereitenTxt );
         $tblPrepareBtn->addRow( $rowPrepare );
 
-        $CancleLnk = new Link( "?showRezept=" . $this->getId() . "&starteZubereitung=" .
-            $this->getId(), $tblPrepareBtn );
+        $CancleLnk = new Link( "?showRezept=" . $this->getId() . "&starteZubereitung=" . $this->getId(), $tblPrepareBtn );
 
         return $CancleLnk;
     }
@@ -517,8 +514,8 @@ class Rezept extends Object {
         $rowPrepare->setAttribute( 0, $zubereitenTxt );
         $tblPrepareBtn->addRow( $rowPrepare );
 
-        $CancleLnk = new Link( "?showRezept=" . $this->getId() . "&starteZubereitung=" .
-            $this->getId() . "&VorbereitungPruefen=" . $this->getId(), $tblPrepareBtn );
+        $CancleLnk = new Link( "?showRezept=" . $this->getId() . "&starteZubereitung=" . $this->getId() .
+            "&VorbereitungPruefen=" . $this->getId(), $tblPrepareBtn );
 
         return $CancleLnk;
     }
@@ -634,8 +631,7 @@ class Rezept extends Object {
      * @return
      */
     function zubereiten() {
-        if ( isset( $_REQUEST['VorbereitungPruefen'] ) && $_REQUEST['VorbereitungPruefen'] ==
-            $this->getId() ) {
+        if ( isset( $_REQUEST['VorbereitungPruefen'] ) && $_REQUEST['VorbereitungPruefen'] == $this->getId() ) {
             if ( $this->vorbereitungPruefen() ) {
                 $this->starteZubereitung();
                 return;
@@ -666,8 +662,7 @@ class Rezept extends Object {
         $rowPreis->setAlign( "right" );
         $rowPreis->setStyle( "padding-left", "10px" );
         $rowPreis->setStyle( "padding-right", "10px" );
-        $rowPreis->setAttribute( 0, new Text( "[fett]Preis:[/fett] " . $this->getPreis() .
-            " Euro", 5 ) );
+        $rowPreis->setAttribute( 0, new Text( "[fett]Preis:[/fett] " . $this->getPreis() . " Euro", 5 ) );
         $tbl->addRow( $rowPreis );
         $tbl->addSpacer( 0, 15 );
 
@@ -752,8 +747,7 @@ class Rezept extends Object {
      * @return
      */
     function show() {
-        if ( isset( $_REQUEST['starteZubereitung'] ) && $_REQUEST['starteZubereitung'] ==
-            $this->getId() ) {
+        if ( isset( $_REQUEST['starteZubereitung'] ) && $_REQUEST['starteZubereitung'] == $this->getId() ) {
             $this->zubereiten();
             return;
         }
@@ -775,7 +769,7 @@ class Rezept extends Object {
 
         // Bild und Zutaten
         $img = $this->getImage();
-        $img->setWidth(170);
+        $img->setWidth( 170 );
         $zutatenListe = $this->getZutatenListe();
         $rowImgZutaten = $tbl->createRow();
         $rowImgZutaten->setAttribute( 0, $img );
@@ -785,9 +779,8 @@ class Rezept extends Object {
         $tbl->addSpacer( 0, 5 );
 
         // Mengen Info
-        $automFill = new Text( "[fett]" . $this->getAutomatischeMenge() .
-            "ml[/fett] von [fett]" . $this->getGesamtMenge() .
-            "ml[/fett]  automatisch abfüllbar", 3, false, true );
+        $automFill = new Text( "[fett]" . $this->getAutomatischeMenge() . "ml[/fett] von [fett]" . $this->getGesamtMenge
+            () . "ml[/fett]  automatisch abfüllbar", 3, false, true );
         $rowautomFillTtl = $tbl->createRow();
         $rowautomFillTtl->setSpawnAll( true );
         $rowautomFillTtl->setAlign( "right" );
@@ -800,8 +793,7 @@ class Rezept extends Object {
         $rowPreis->setAlign( "right" );
         $rowPreis->setStyle( "padding-left", "10px" );
         $rowPreis->setStyle( "padding-right", "10px" );
-        $rowPreis->setAttribute( 0, new Text( "[fett]Preis:[/fett] " . $this->getPreis() .
-            " Euro", 5 ) );
+        $rowPreis->setAttribute( 0, new Text( "[fett]Preis:[/fett] " . $this->getPreis() . " Euro", 5 ) );
 
         $tbl->addSpacer( 1, 15 );
 

@@ -1,646 +1,589 @@
 <?PHP
 
-  class HomeControlMap extends Object
-  {
-      private $EDITMODE = false;
-      private $LAYOUT_ART = false;
-      private $CONTROL_IMAGE_WIDTH = 40;
-      private $CONTROL_IMAGE_HEIGHT = 40;
-
-      public $LAYOUTART_DESKTOP = "DESKTOP";
-      public $LAYOUTART_TABLET = "TABLET";
-      public $LAYOUTART_MOBILE = "MOBILE";
+class HomeControlMap extends Object {
+    private $EDITMODE = false;
+    private $LAYOUT_ART = false;
+    private $CONTROL_IMAGE_WIDTH = 40;
+    private $CONTROL_IMAGE_HEIGHT = 40;
 
-      function HomeControlMap($editModus = false, $layoutArt = "DESKTOP")
-      {
-          $this->EDITMODE = $editModus;
-          $this->LAYOUT_ART = $layoutArt;
-      }
+    public $LAYOUTART_DESKTOP = "DESKTOP";
+    public $LAYOUTART_TABLET = "TABLET";
+    public $LAYOUTART_MOBILE = "MOBILE";
 
+    function HomeControlMap( $editModus = false, $layoutArt = "DESKTOP" ) {
+        $this->EDITMODE = $editModus;
+        $this->LAYOUT_ART = $layoutArt;
+    }
 
-      function getInsertMask($x, $y)
-      {
-          $mask = new Table(array("", "", ""));
-          $mask->setSpacing(3);
 
-          $mask->addSpacer(0, 10);
+    function getInsertMask( $x, $y ) {
+        $mask = new Table( array( "", "", "" ) );
+        $mask->setSpacing( 3 );
 
-          $rTitle = $mask->createRow();
-          $rTitle->setAttribute(0, new Title("Neues Objekt Anlegen"));
-          $rTitle->setSpawnAll(true);
-          $mask->addRow($rTitle);
-
-          $mask->addSpacer(0, 10);
+        $mask->addSpacer( 0, 10 );
 
-          $rZimmer = $mask->createRow();
-          $rZimmer->setAttribute(0, "Zimmer: ");
-          $rZimmer->setAttribute(1, $this->getZimmerCombo("Zimmer"));
-          $rZimmer->addSpan(1, 2);
-          $mask->addRow($rZimmer);
+        $rTitle = $mask->createRow();
+        $rTitle->setAttribute( 0, new Title( "Neues Objekt Anlegen" ) );
+        $rTitle->setSpawnAll( true );
+        $mask->addRow( $rTitle );
 
-          $rArt = $mask->createRow();
-          $rArt->setAttribute(0, "Geräte-Art: ");
-          $rArt->setAttribute(1, new ComboBox("Art", getComboArrayBySql("SELECT id, name FROM homecontrol_art")));
-          $rArt->addSpan(1, 2);
-          $mask->addRow($rArt);
+        $mask->addSpacer( 0, 10 );
 
-          $rKoord = $mask->createRow();
-          $rKoord->setAttribute(0, "Koordinaten: ");
-          $rKoord->setAttribute(1, new TextField("X", $x, 15, 4, true));
-          $rKoord->setAttribute(2, new TextField("Y", $y, 15, 4, true));
-          $mask->addRow($rKoord);
+        $rZimmer = $mask->createRow();
+        $rZimmer->setAttribute( 0, "Zimmer: " );
+        $rZimmer->setAttribute( 1, $this->getZimmerCombo( "Zimmer" ) );
+        $rZimmer->addSpan( 1, 2 );
+        $mask->addRow( $rZimmer );
 
-          $rFunk = $mask->createRow();
-          $rFunk->setAttribute(0, "Funk-ID 1/2: ");
-          $rFunk->setAttribute(1, $this->getFunkIdCombo("FunkId", false));
-          $rFunk->setAttribute(2, $this->getFunkIdCombo("FunkId2", true));
-          $mask->addRow($rFunk);
+        $rArt = $mask->createRow();
+        $rArt->setAttribute( 0, "Geräte-Art: " );
+        $rArt->setAttribute( 1, new ComboBox( "Art", getComboArrayBySql( "SELECT id, name FROM homecontrol_art" ) ) );
+        $rArt->addSpan( 1, 2 );
+        $mask->addRow( $rArt );
 
-          $rName = $mask->createRow();
-          $rName->setAttribute(0, "Name: ");
-          $rName->setAttribute(1, new TextField("Name", "", 30, 30));
-          $rName->addSpan(1, 2);
-          $mask->addRow($rName);
+        $rKoord = $mask->createRow();
+        $rKoord->setAttribute( 0, "Koordinaten: " );
+        $rKoord->setAttribute( 1, new TextField( "X", $x, 15, 4, true ) );
+        $rKoord->setAttribute( 2, new TextField( "Y", $y, 15, 4, true ) );
+        $mask->addRow( $rKoord );
 
-          $mask->addSpacer(0, 20);
+        $rFunk = $mask->createRow();
+        $rFunk->setAttribute( 0, "Funk-ID 1/2: " );
+        $rFunk->setAttribute( 1, $this->getFunkIdCombo( "FunkId", false ) );
+        $rFunk->setAttribute( 2, $this->getFunkIdCombo( "FunkId2", true ) );
+        $mask->addRow( $rFunk );
 
-          $rActions = $mask->createRow();
-          $rActions->setAttribute(0, new Button("SaveNewControl", "Speichern"));
-          $rActions->setSpawnAll(true);
-          $mask->addRow($rActions);
+        $rName = $mask->createRow();
+        $rName->setAttribute( 0, "Name: " );
+        $rName->setAttribute( 1, new TextField( "Name", "", 30, 30 ) );
+        $rName->addSpan( 1, 2 );
+        $mask->addRow( $rName );
 
-          $mask->addSpacer(0, 10);
+        $mask->addSpacer( 0, 20 );
 
+        $rActions = $mask->createRow();
+        $rActions->setAttribute( 0, new Button( "SaveNewControl", "Speichern" ) );
+        $rActions->setSpawnAll( true );
+        $mask->addRow( $rActions );
 
-          $frm = new Form();
-          $frm->add(new HiddenField("InsertNewControl", "do"));
-          $frm->add($mask);
+        $mask->addSpacer( 0, 10 );
 
-          return $frm;
-      }
 
+        $frm = new Form();
+        $frm->add( new HiddenField( "InsertNewControl", "do" ) );
+        $frm->add( $mask );
 
-      function getFunkIdCombo($name, $leerEintrag = false, $default = null)
-      {
-          $cobArr = array();
+        return $frm;
+    }
 
-          if ($leerEintrag)
-          {
-              $cobArr[''] = " ";
-          }
 
-          $usedFunkIds = $this->getUsedFunkIds();
+    function getFunkIdCombo( $name, $leerEintrag = false, $default = null ) {
+        $cobArr = array();
 
-          for ($i = 1; $i < 160; $i++)
-          {
-              if (!existsInArray($i, $usedFunkIds) || $default == $i)
-              {
-                  $code = $i;
-                  $value = $i;
+        if ( $leerEintrag ) {
+            $cobArr[''] = " ";
+        }
 
-                  $cobArr[$code] = $value;
-              }
-          }
+        $usedFunkIds = $this->getUsedFunkIds();
 
-          $cob = new Combobox($name, $cobArr, $default);
-          return $cob;
+        for ( $i = 1; $i < 160; $i++ ) {
+            if ( !existsInArray( $i, $usedFunkIds ) || $default == $i ) {
+                $code = $i;
+                $value = $i;
 
-      }
+                $cobArr[$code] = $value;
+            }
+        }
 
+        $cob = new Combobox( $name, $cobArr, $default );
+        return $cob;
 
-      function getUsedFunkIds()
-      {
-          $arr = array();
+    }
 
-          $sql = "SELECT funk_id, funk_id2 FROM homecontrol_config";
-          $rslt = $_SESSION['config']->DBCONNECT->executeQuery($sql);
 
-          while ($row = mysql_fetch_array($rslt))
-          {
-              if (strlen($row['funk_id']) > 0)
-              {
-                  $arr[$row['funk_id']] = $row['funk_id'];
-              }
+    function getUsedFunkIds() {
+        $arr = array();
 
-              if (strlen($row['funk_id2']) > 0)
-              {
-                  $arr[$row['funk_id2']] = $row['funk_id2'];
-              }
-          }
+        $sql = "SELECT funk_id, funk_id2 FROM homecontrol_config";
+        $rslt = $_SESSION['config']->DBCONNECT->executeQuery( $sql );
 
-          return $arr;
-      }
+        while ( $row = mysql_fetch_array( $rslt ) ) {
+            if ( strlen( $row['funk_id'] ) > 0 ) {
+                $arr[$row['funk_id']] = $row['funk_id'];
+            }
 
+            if ( strlen( $row['funk_id2'] ) > 0 ) {
+                $arr[$row['funk_id2']] = $row['funk_id2'];
+            }
+        }
 
-      function getEditMask($id)
-      {
+        return $arr;
+    }
 
-          $dbTable = new DbTable($_SESSION['config']->DBCONNECT, 'homecontrol_config', array("id", "name", "funk_id",
-              "funk_id2", "beschreibung", "control_art", "etage", "zimmer", "x", "y"), "", "", "", "id=" . $id);
 
-          $r = $dbTable->getRow(1);
+    function getEditMask( $id ) {
 
-          $mask = new Table(array("", "", ""));
-          $mask->setSpacing(3);
+        $dbTable = new DbTable( $_SESSION['config']->DBCONNECT, 'homecontrol_config', array( "id", "name",
+            "funk_id", "funk_id2", "beschreibung", "control_art", "etage", "zimmer", "x", "y" ), "", "", "",
+            "id=" . $id );
 
-          $mask->addSpacer(0, 10);
+        $r = $dbTable->getRow( 1 );
 
-          $rTitle = $mask->createRow();
-          $rTitle->setAttribute(0, new Title("Objekt Bearbeiten"));
-          $rTitle->setSpawnAll(true);
-          $mask->addRow($rTitle);
+        $mask = new Table( array( "", "", "" ) );
+        $mask->setSpacing( 3 );
 
-          $mask->addSpacer(0, 10);
+        $mask->addSpacer( 0, 10 );
 
-          $rZimmer = $mask->createRow();
-          $rZimmer->setAttribute(0, "Zimmer: ");
-          $rZimmer->setAttribute(1, $this->getZimmerCombo("Zimmer", $r->getNamedAttribute("zimmer")));
-          $rZimmer->addSpan(1, 2);
-          $mask->addRow($rZimmer);
+        $rTitle = $mask->createRow();
+        $rTitle->setAttribute( 0, new Title( "Objekt Bearbeiten" ) );
+        $rTitle->setSpawnAll( true );
+        $mask->addRow( $rTitle );
 
-          $r4 = $mask->createRow();
-          $r4->setAttribute(0, "Geräte-Art: ");
-          $r4->setAttribute(1, new ComboBox("Art", getComboArrayBySql("SELECT id, name FROM homecontrol_art"), $r->
-              getNamedAttribute("control_art")));
-          $r4->addSpan(1, 2);
-          $mask->addRow($r4);
+        $mask->addSpacer( 0, 10 );
 
-          $r1 = $mask->createRow();
-          $r1->setAttribute(0, "Koordinaten: ");
-          $r1->setAttribute(1, new TextField("X", $r->getNamedAttribute("x"), 15, 4, false));
-          $r1->setAttribute(2, new TextField("Y", $r->getNamedAttribute("y"), 15, 4, false));
-          $mask->addRow($r1);
+        $rZimmer = $mask->createRow();
+        $rZimmer->setAttribute( 0, "Zimmer: " );
+        $rZimmer->setAttribute( 1, $this->getZimmerCombo( "Zimmer", $r->getNamedAttribute( "zimmer" ) ) );
+        $rZimmer->addSpan( 1, 2 );
+        $mask->addRow( $rZimmer );
 
+        $r4 = $mask->createRow();
+        $r4->setAttribute( 0, "Geräte-Art: " );
+        $r4->setAttribute( 1, new ComboBox( "Art", getComboArrayBySql( "SELECT id, name FROM homecontrol_art" ),
+            $r->getNamedAttribute( "control_art" ) ) );
+        $r4->addSpan( 1, 2 );
+        $mask->addRow( $r4 );
 
-          $r3 = $mask->createRow();
-          $r3->setAttribute(0, "Funk-ID 1/2: ");
-          $r3->setAttribute(1, $this->getFunkIdCombo("FunkId", false, $r->getNamedAttribute("funk_id")));
-          $r3->setAttribute(2, $this->getFunkIdCombo("FunkId2", true, $r->getNamedAttribute("funk_id2")));
-          $mask->addRow($r3);
+        $r1 = $mask->createRow();
+        $r1->setAttribute( 0, "Koordinaten: " );
+        $r1->setAttribute( 1, new TextField( "X", $r->getNamedAttribute( "x" ), 15, 4, false ) );
+        $r1->setAttribute( 2, new TextField( "Y", $r->getNamedAttribute( "y" ), 15, 4, false ) );
+        $mask->addRow( $r1 );
 
 
-          $r2 = $mask->createRow();
-          $r2->setAttribute(0, "Name: ");
-          $r2->setAttribute(1, new TextField("Name", $r->getNamedAttribute("name"), 30, 20));
-          $r2->addSpan(1, 2);
-          $mask->addRow($r2);
+        $r3 = $mask->createRow();
+        $r3->setAttribute( 0, "Funk-ID 1/2: " );
+        $r3->setAttribute( 1, $this->getFunkIdCombo( "FunkId", false, $r->getNamedAttribute( "funk_id" ) ) );
+        $r3->setAttribute( 2, $this->getFunkIdCombo( "FunkId2", true, $r->getNamedAttribute( "funk_id2" ) ) );
+        $mask->addRow( $r3 );
 
-          $mask->addSpacer(0, 20);
 
-          $r4 = $mask->createRow();
-          $r4->setAttribute(0, new Button("SaveEditedControl", "Speichern"));
-          $r4->setSpawnAll(true);
-          $mask->addRow($r4);
+        $r2 = $mask->createRow();
+        $r2->setAttribute( 0, "Name: " );
+        $r2->setAttribute( 1, new TextField( "Name", $r->getNamedAttribute( "name" ), 30, 20 ) );
+        $r2->addSpan( 1, 2 );
+        $mask->addRow( $r2 );
 
-          $mask->addSpacer(0, 10);
+        $mask->addSpacer( 0, 20 );
 
-          $frm = new Form();
-          $frm->add(new HiddenField("editControl", $_REQUEST['editControl']));
-          $frm->add(new HiddenField("RowId", $r->getNamedAttribute("rowid")));
-          $frm->add($mask);
+        $r4 = $mask->createRow();
+        $r4->setAttribute( 0, new Button( "SaveEditedControl", "Speichern" ) );
+        $r4->setSpawnAll( true );
+        $mask->addRow( $r4 );
 
+        $mask->addSpacer( 0, 10 );
 
-          $frmDel = new Form();
-          $frmDel->add(new Button("DelControl" . $r->getNamedAttribute("id"), "Löschen"));
-          $frmDel->add(new HiddenField("removeId", $r->getNamedAttribute("id")));
+        $frm = new Form();
+        $frm->add( new HiddenField( "editControl", $_REQUEST['editControl'] ) );
+        $frm->add( new HiddenField( "RowId", $r->getNamedAttribute( "rowid" ) ) );
+        $frm->add( $mask );
 
-          $dv = new Div();
-          $dv->add($frm);
-          $dv->add($frmDel);
-
-          return $dv;
-      }
-
-
-      function getZimmerCombo($name, $default = null)
-      {
-          $combo = new ComboBox($name, getComboArrayBySql("SELECT null,' ' FROM dual UNION SELECT id, name FROM homecontrol_zimmer WHERE etage_id=" .
-              $_SESSION['aktEtage'] . " "), $default);
-
-          return $combo;
-      }
-
-
-      function getEtagenCombo($name, $default = null)
-      {
-          $combo = new ComboBox($name, getComboArrayBySql("SELECT null,' ' FROM dual UNION SELECT id, name FROM homecontrol_etagen "),
-              $default);
-
-          return $combo;
-      }
-
-
-      function getZimmerFullSwitchNavigation()
-      {
-          $cobZimmer = $this->getZimmerCombo("FullSwitchZimmer");
-          $frmFullSwitch = new Form();
-          $frmFullSwitch->add(new Text("Zimmer:"));
-          $frmFullSwitch->add($cobZimmer);
-          $frmFullSwitch->add(new Button("fullSwitchOn", "Alles an"));
-          $frmFullSwitch->add(new Button("fullSwitchOff", "Alles aus"));
-
-          return $frmFullSwitch;
-      }
-
-
-      function getNavigationBar()
-      {
-          $mask = new Table(array("Etage Label", "Etage Combo", "Spacer", "Zimmer Full-Switch"));
-          $mask->setAlignments(array("left", "left", "left", "right"));
-          $mask->setHeight(40);
-          $mask->setVAlign("middle");
-          $row = $mask->createRow();
-          $mask->addRow($row);
-
-          $cobEtage = $this->getEtagenCombo("aktEtage", $_SESSION['aktEtage']);
-          $cobEtage->setDirectSelect(true);
-          $frmEtage = new Form();
-          $frmEtage->add($cobEtage);
-
-          $frmFullSwitch = $this->getZimmerFullSwitchNavigation();
-
-          $row->setAttribute(0, "Etage:");
-          $row->setAttribute(1, $frmEtage);
-          $row->setAttribute(2, "");
-          $row->setAttribute(3, $frmFullSwitch);
-
-          return $mask;
-      }
-
-
-      function handleEtage()
-      {
-          if ((!isset($_SESSION['aktEtage']) || strlen($_SESSION['aktEtage']) == 0))
-          {
-              if (isset($_REQUEST['aktEtage']))
-              {
-                  $_SESSION['aktEtage'] = $_REQUEST['aktEtage'];
-              } else
-              {
-                  $_SESSION['aktEtage'] = 2;
-              }
-          } else
-              if (isset($_REQUEST['aktEtage']))
-              {
-                  $_SESSION['aktEtage'] = $_REQUEST['aktEtage'];
-              }
-      }
-
-
-      function handleControlEdit($dbTable)
-      {
-          // Neuen Eintrag anlegen
-          if (isset($_SESSION['aktEtage']) && isset($_REQUEST['Name']) && isset($_REQUEST['FunkId']) && isset($_REQUEST['Art']))
-          {
-              if (isset($_REQUEST['InsertNewControl']) && $_REQUEST['InsertNewControl'] == "do" && isset($_REQUEST['X']) &&
-                  isset($_REQUEST['Y']))
-              {
-                  $newRow = $dbTable->createRow();
-                  $newRow->setNamedAttribute("name", $_REQUEST['Name']);
-                  $newRow->setNamedAttribute("x", $_REQUEST['X']);
-                  $newRow->setNamedAttribute("y", $_REQUEST['Y']);
-                  $newRow->setNamedAttribute("etage", $_SESSION['aktEtage']);
-                  $newRow->setNamedAttribute("funk_id", $_REQUEST['FunkId']);
-                  $newRow->setNamedAttribute("control_art", $_REQUEST['Art']);
-
-                  if (isset($_REQUEST['Zimmer']))
-                  {
-                      $newRow->setNamedAttribute("zimmer", $_REQUEST['Zimmer']);
-                  } else
-                  {
-                      $newRow->setNamedAttribute("zimmer", null);
-                  }
-
-                  if (isset($_REQUEST['FunkId2']) && $_REQUEST['FunkId2'] > 0)
-                  {
-                      $newRow->setNamedAttribute("funk_id2", $_REQUEST['FunkId2']);
-                  } else
-                  {
-                      $newRow->setNamedAttribute("funk_id2", null);
-                  }
-
-
-                  if (isset($_REQUEST['Beschreibung']))
-                  {
-                      $newRow->setNamedAttribute("beschreibung", $_REQUEST['Beschreibung']);
-                  } else
-                  {
-                      $newRow->setNamedAttribute("beschreibung", null);
-                  }
-
-                  $newRow->insertIntoDB();
-                  return true;
-              }
-
-              // Existierenden Eintrag bearbeiten
-              if (isset($_REQUEST['editControl']) && strlen($_REQUEST['editControl']) > 0)
-              {
-                  $newRow = $dbTable->getRowById($_REQUEST['editControl']);
-                  $newRow->setNamedAttribute("name", $_REQUEST['Name']);
-                  $newRow->setNamedAttribute("x", $_REQUEST['X']);
-                  $newRow->setNamedAttribute("y", $_REQUEST['Y']);
-                  $newRow->setNamedAttribute("etage", $_SESSION['aktEtage']);
-                  $newRow->setNamedAttribute("funk_id", $_REQUEST['FunkId']);
-                  $newRow->setNamedAttribute("control_art", $_REQUEST['Art']);
-
-                  if (isset($_REQUEST['Zimmer']))
-                  {
-                      $newRow->setNamedAttribute("zimmer", $_REQUEST['Zimmer']);
-                  } else
-                  {
-                      $newRow->setNamedAttribute("zimmer", null);
-                  }
-
-                  if (isset($_REQUEST['FunkId2']) && $_REQUEST['FunkId2'] > 0)
-                  {
-                      $newRow->setNamedAttribute("funk_id2", $_REQUEST['FunkId2']);
-                  } else
-                  {
-                      $newRow->setNamedAttribute("funk_id2", null);
-                  }
-
-                  if (isset($_REQUEST['Beschreibung']))
-                  {
-                      $newRow->setNamedAttribute("beschreibung", $_REQUEST['Beschreibung']);
-                  } else
-                  {
-                      $newRow->setNamedAttribute("beschreibung", null);
-                  }
-
-                  $newRow->updateDB();
-
-                  return true;
-              }
-          }
-
-          if (isset($_REQUEST['removeId']) && isset($_REQUEST['DelControl' . $_REQUEST['removeId']]) && $_REQUEST['DelControl' .
-              $_REQUEST['removeId']] == "Löschen")
-          {
-              $newRow = $dbTable->getRowById($_REQUEST['removeId']);
-              $newRow->deleteFromDb();
-
-              return true;
-          }
-
-          return false;
-      }
-
-
-      function postHandleControlEdit($dbTable)
-      {
-          // Neuen Eintrag anlegen
-          if (isset($_REQUEST['InsertNewControl']) && $_REQUEST['InsertNewControl'] == "do" && isset($_REQUEST['X']) &&
-              isset($_REQUEST['Y']))
-          {
-
-              if (!(isset($_REQUEST['Name']) && isset($_REQUEST['FunkId']) && isset($_REQUEST['Art'])))
-              {
-
-                  $mask = $this->getInsertMask($_REQUEST['X'], $_REQUEST['Y']);
-                  $mask->show();
-
-                  $dv = new Div();
-                  $dv->setVAlign("middle");
-                  $dv->setAlign("center");
-                  $dv->setBorder(3);
-                  $dv->setStyle("border-color", "#ff2200");
-                  $dv->setStyle("background-color", "#aacc00");
-                  $dv->setXPos($_REQUEST['X']);
-                  $dv->setYPos($_REQUEST['Y']);
-                  $dv->setWidth($this->CONTROL_IMAGE_WIDTH);
-                  $dv->setHeight($this->CONTROL_IMAGE_HEIGHT);
-                  $dv->add(new Text("Neu", 3, true, false, false, false));
-                  $dv->show();
-
-              }
-          }
-
-          // Existierenden Eintrag bearbeiten
-          if (isset($_REQUEST['editControl']) && strlen($_REQUEST['editControl']) > 0)
-          {
-              if (!(isset($_REQUEST['RowId']) && isset($_REQUEST['Name']) && isset($_REQUEST['FunkId']) && isset($_REQUEST['Art'])))
-              {
-                  $mask = $this->getEditMask($_REQUEST['editControl']);
-                  $mask->show();
-              }
-          }
-
-      }
-
-
-      function getEtagenImage()
-      {
-          $img = new Image($this->getEtagenImagePath(), -1, -1, 640);
-          return $img;
-      }
-
-      function getEtagenImagePath()
-      {
-          $dbTable = new DbTable($_SESSION['config']->DBCONNECT, 'homecontrol_etagen', array("pic"), "", "", "", "id=" .
-              $_SESSION['aktEtage']);
-          $row = $dbTable->getRow(1);
-
-          return $row->getNamedAttribute("pic");
-
-      }
-
-
-      function showMap($dbTable)
-      {
-          $bgTbl = new Table(array(""));
-          $bgTbl->setOnClick("Coords()");
-          $bgTbl->setWidth("640");
-          $bgTbl->setHeight("360");
-          $bgTbl->setStyle("background-image", "url(" . $this->getEtagenImagePath() . ")");
-
-          $rowImg = $bgTbl->createRow();
-
-          $rowImg->setAttribute(0, " ");
-          $rowImg->setPadding("4px");
-
-          $bgTbl->addRow($rowImg);
-          $bgTbl->show();
-
-
-          for ($i = 1; $i <= $dbTable->getRowCount(); $i++)
-          {
-              $currConfigRow = $dbTable->getRow($i);
-
-              $ctrlItem = new HomeControlItem($currConfigRow, $this->EDITMODE);
-              $ctrlItem->show();
-          }
-
-          return $dbTable;
-      }
-
-
-      function showMobileView()
-      {
-          $mobileView = $this->getMobileView();
-          $mobileView->show();
-      }
-
-
-      function getMobileView()
-      {
-          $layoutTable = new Table(array(""));
-          $layoutTable->setWidth("98%");
-          $this->handleEtage();
-
-          $dbTable = new DbTable($_SESSION['config']->DBCONNECT, 'homecontrol_config', array("id", "name", "funk_id",
-              "funk_id2", "beschreibung", "control_art", "etage", "zimmer", "x", "y"), "", "", "etage, name", "");
-
-          $layoutRow = null;
-          $letzteEtage = "";
-
-          foreach ($dbTable->ROWS as $row)
-          {
-
-              if ($letzteEtage != $row->getNamedAttribute("etage"))
-              {
-                  $letzteEtage = $row->getNamedAttribute("etage");
-                  $etagenName = $this->getEtagenName($letzteEtage);
-
-                  $layoutTable->addSpacer(0, 40);
-
-                  $ttl = new Title($etagenName, 0, 8);
-                  $ttl->setAlign("left");
-
-                  $layoutRow = $layoutTable->createRow();
-                  $layoutRow->setSpawnAll(true);
-                  $layoutTable->addRow($layoutRow);
-                  $layoutRow->setAttribute(0, $ttl);
-
-                  $layoutTable->addSpacer(0, 20);
-              }
-
-              $layoutRow = $layoutTable->createRow();
-              $layoutTable->addRow($layoutRow);
-
-              $hcItem = new HomeControlItem($row, false);
-              $switchComp = $hcItem->getMobileSwitch();
-              $layoutRow->setAttribute(0, $switchComp);
-          }
-
-          return $layoutTable;
-      }
-
-
-      function showTabletView()
-      {
-          $tabletView = $this->getTabletView();
-          $tabletView->show();
-      }
-
-
-      function getTabletView()
-      {
-          $colCount = 4;
-          $layoutTable = new Table(array("", "", "", ""));
-          $layoutTable->setSpacing(15);
-
-          $this->handleEtage();
-
-          $dbTable = new DbTable($_SESSION['config']->DBCONNECT, 'homecontrol_config', array("id", "name", "funk_id",
-              "funk_id2", "beschreibung", "control_art", "etage", "zimmer", "x", "y"), "", "", "etage, name", "");
-
-          $currCol = $colCount;
-          $layoutRow = null;
-          $letzteEtage = "";
-
-          foreach ($dbTable->ROWS as $row)
-          {
-
-              if ($letzteEtage != $row->getNamedAttribute("etage"))
-              {
-                  $letzteEtage = $row->getNamedAttribute("etage");
-                  $etagenName = $this->getEtagenName($letzteEtage);
-
-                  $currCol = 0;
-
-                  $layoutTable->addSpacer(0, 25);
-
-                  $ttl = new Title($etagenName, 0, 4);
-                  $ttl->setAlign("left");
-
-                  $layoutRow = $layoutTable->createRow();
-                  $layoutRow->setSpawnAll(true);
-                  $layoutTable->addRow($layoutRow);
-                  $layoutRow->setAttribute(0, $ttl);
-
-                  $layoutRow = $layoutTable->createRow();
-                  $layoutTable->addRow($layoutRow);
-              } elseif ($currCol == $colCount)
-              {
-                  $currCol = 0;
-                  $layoutRow = $layoutTable->createRow();
-                  $layoutTable->addRow($layoutRow);
-              }
-
-              $hcItem = new HomeControlItem($row, false);
-              $switchComp = $hcItem->getTabletSwitch();
-              $layoutRow->setAttribute($currCol, $switchComp);
-
-              $currCol++;
-          }
-
-          return $layoutTable;
-      }
-
-
-      function getEtagenName($etage)
-      {
-          $configDb = new DbTable($_SESSION['config']->DBCONNECT, 'homecontrol_etagen', array("name"), "", "", "", "id=" .
-              $etage);
-
-          $row = $configDb->getRow(1);
-          if ($row != null)
-          {
-              return $row->getNamedAttribute('name');
-          }
-
-          return "false";
-      }
-
-
-      /*
-      * Standard Anzeige
-      *
-      * Zeigt die Karte mit allen Controls an.
-      */
-      function show()
-      {
-          $this->handleEtage();
-
-          if ($this->LAYOUT_ART == $this->LAYOUTART_MOBILE)
-          {
-              $this->showMobileView();
-              return;
-          }
-
-          if ($this->LAYOUT_ART == $this->LAYOUTART_TABLET)
-          {
-              $this->showTabletView();
-              return;
-          }
-
-          // ungültige Layout-Art korrigieren auf Default (Desktop)
-          $this->LAYOUT_ART = $this->LAYOUTART_DESKTOP;
-
-          $dbTable = new DbTable($_SESSION['config']->DBCONNECT, 'homecontrol_config', array("id", "name", "funk_id",
-              "funk_id2", "beschreibung", "control_art", "etage", "zimmer", "x", "y"), "", "", "", "etage=" . $_SESSION['aktEtage']);
-
-          if ($this->handleControlEdit($dbTable))
-          {
-              $dbTable->refresh();
-          }
-
-          $navBar = $this->getNavigationBar();
-          $navBar->show();
-
-          if ($this->EDITMODE)
-          {
-              echo "
+
+        $frmDel = new Form();
+        $frmDel->add( new Button( "DelControl" . $r->getNamedAttribute( "id" ), "Löschen" ) );
+        $frmDel->add( new HiddenField( "removeId", $r->getNamedAttribute( "id" ) ) );
+
+        $dv = new Div();
+        $dv->add( $frm );
+        $dv->add( $frmDel );
+
+        return $dv;
+    }
+
+
+    function getZimmerCombo( $name, $default = null ) {
+        $combo = new ComboBox( $name, getComboArrayBySql( "SELECT null,' ' FROM dual UNION SELECT id, name FROM homecontrol_zimmer WHERE etage_id=" .
+            $_SESSION['aktEtage'] . " " ), $default );
+
+        return $combo;
+    }
+
+
+    function getEtagenCombo( $name, $default = null ) {
+        $combo = new ComboBox( $name, getComboArrayBySql( "SELECT null,' ' FROM dual UNION SELECT id, name FROM homecontrol_etagen " ),
+            $default );
+
+        return $combo;
+    }
+
+
+    function getZimmerFullSwitchNavigation() {
+        $cobZimmer = $this->getZimmerCombo( "FullSwitchZimmer" );
+        $frmFullSwitch = new Form();
+        $frmFullSwitch->add( new Text( "Zimmer:" ) );
+        $frmFullSwitch->add( $cobZimmer );
+        $frmFullSwitch->add( new Button( "fullSwitchOn", "Alles an" ) );
+        $frmFullSwitch->add( new Button( "fullSwitchOff", "Alles aus" ) );
+
+        return $frmFullSwitch;
+    }
+
+
+    function getNavigationBar() {
+        $mask = new Table( array( "Etage Label", "Etage Combo", "Spacer", "Zimmer Full-Switch" ) );
+        $mask->setAlignments( array( "left", "left", "left", "right" ) );
+        $mask->setHeight( 40 );
+        $mask->setVAlign( "middle" );
+        $row = $mask->createRow();
+        $mask->addRow( $row );
+
+        $cobEtage = $this->getEtagenCombo( "aktEtage", $_SESSION['aktEtage'] );
+        $cobEtage->setDirectSelect( true );
+        $frmEtage = new Form();
+        $frmEtage->add( $cobEtage );
+
+        $frmFullSwitch = $this->getZimmerFullSwitchNavigation();
+
+        $row->setAttribute( 0, "Etage:" );
+        $row->setAttribute( 1, $frmEtage );
+        $row->setAttribute( 2, "" );
+        $row->setAttribute( 3, $frmFullSwitch );
+
+        return $mask;
+    }
+
+
+    function handleEtage() {
+        if ( ( !isset( $_SESSION['aktEtage'] ) || strlen( $_SESSION['aktEtage'] ) == 0 ) ) {
+            if ( isset( $_REQUEST['aktEtage'] ) ) {
+                $_SESSION['aktEtage'] = $_REQUEST['aktEtage'];
+            } else {
+                $_SESSION['aktEtage'] = 2;
+            }
+        } else
+            if ( isset( $_REQUEST['aktEtage'] ) ) {
+                $_SESSION['aktEtage'] = $_REQUEST['aktEtage'];
+            }
+    }
+
+
+    function handleControlEdit( $dbTable ) {
+        // Neuen Eintrag anlegen
+        if ( isset( $_SESSION['aktEtage'] ) && isset( $_REQUEST['Name'] ) && isset( $_REQUEST['FunkId'] ) &&
+            isset( $_REQUEST['Art'] ) ) {
+            if ( isset( $_REQUEST['InsertNewControl'] ) && $_REQUEST['InsertNewControl'] == "do" && isset( $_REQUEST['X'] ) &&
+                isset( $_REQUEST['Y'] ) ) {
+                $newRow = $dbTable->createRow();
+                $newRow->setNamedAttribute( "name", $_REQUEST['Name'] );
+                $newRow->setNamedAttribute( "x", $_REQUEST['X'] );
+                $newRow->setNamedAttribute( "y", $_REQUEST['Y'] );
+                $newRow->setNamedAttribute( "etage", $_SESSION['aktEtage'] );
+                $newRow->setNamedAttribute( "funk_id", $_REQUEST['FunkId'] );
+                $newRow->setNamedAttribute( "control_art", $_REQUEST['Art'] );
+
+                if ( isset( $_REQUEST['Zimmer'] ) ) {
+                    $newRow->setNamedAttribute( "zimmer", $_REQUEST['Zimmer'] );
+                } else {
+                    $newRow->setNamedAttribute( "zimmer", null );
+                }
+
+                if ( isset( $_REQUEST['FunkId2'] ) && $_REQUEST['FunkId2'] > 0 ) {
+                    $newRow->setNamedAttribute( "funk_id2", $_REQUEST['FunkId2'] );
+                } else {
+                    $newRow->setNamedAttribute( "funk_id2", null );
+                }
+
+
+                if ( isset( $_REQUEST['Beschreibung'] ) ) {
+                    $newRow->setNamedAttribute( "beschreibung", $_REQUEST['Beschreibung'] );
+                } else {
+                    $newRow->setNamedAttribute( "beschreibung", null );
+                }
+
+                $newRow->insertIntoDB();
+                return true;
+            }
+
+            // Existierenden Eintrag bearbeiten
+            if ( isset( $_REQUEST['editControl'] ) && strlen( $_REQUEST['editControl'] ) > 0 ) {
+                $newRow = $dbTable->getRowById( $_REQUEST['editControl'] );
+                $newRow->setNamedAttribute( "name", $_REQUEST['Name'] );
+                $newRow->setNamedAttribute( "x", $_REQUEST['X'] );
+                $newRow->setNamedAttribute( "y", $_REQUEST['Y'] );
+                $newRow->setNamedAttribute( "etage", $_SESSION['aktEtage'] );
+                $newRow->setNamedAttribute( "funk_id", $_REQUEST['FunkId'] );
+                $newRow->setNamedAttribute( "control_art", $_REQUEST['Art'] );
+
+                if ( isset( $_REQUEST['Zimmer'] ) ) {
+                    $newRow->setNamedAttribute( "zimmer", $_REQUEST['Zimmer'] );
+                } else {
+                    $newRow->setNamedAttribute( "zimmer", null );
+                }
+
+                if ( isset( $_REQUEST['FunkId2'] ) && $_REQUEST['FunkId2'] > 0 ) {
+                    $newRow->setNamedAttribute( "funk_id2", $_REQUEST['FunkId2'] );
+                } else {
+                    $newRow->setNamedAttribute( "funk_id2", null );
+                }
+
+                if ( isset( $_REQUEST['Beschreibung'] ) ) {
+                    $newRow->setNamedAttribute( "beschreibung", $_REQUEST['Beschreibung'] );
+                } else {
+                    $newRow->setNamedAttribute( "beschreibung", null );
+                }
+
+                $newRow->updateDB();
+
+                return true;
+            }
+        }
+
+        if ( isset( $_REQUEST['removeId'] ) && isset( $_REQUEST['DelControl' . $_REQUEST['removeId']] ) && $_REQUEST['DelControl' .
+            $_REQUEST['removeId']] == "Löschen" ) {
+            $newRow = $dbTable->getRowById( $_REQUEST['removeId'] );
+            $newRow->deleteFromDb();
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    function postHandleControlEdit( $dbTable ) {
+        // Neuen Eintrag anlegen
+        if ( isset( $_REQUEST['InsertNewControl'] ) && $_REQUEST['InsertNewControl'] == "do" && isset( $_REQUEST['X'] ) &&
+            isset( $_REQUEST['Y'] ) ) {
+
+            if ( !( isset( $_REQUEST['Name'] ) && isset( $_REQUEST['FunkId'] ) && isset( $_REQUEST['Art'] ) ) ) {
+
+                $mask = $this->getInsertMask( $_REQUEST['X'], $_REQUEST['Y'] );
+                $mask->show();
+
+                $dv = new Div();
+                $dv->setVAlign( "middle" );
+                $dv->setAlign( "center" );
+                $dv->setBorder( 3 );
+                $dv->setStyle( "border-color", "#ff2200" );
+                $dv->setStyle( "background-color", "#aacc00" );
+                $dv->setXPos( $_REQUEST['X'] );
+                $dv->setYPos( $_REQUEST['Y'] );
+                $dv->setWidth( $this->CONTROL_IMAGE_WIDTH );
+                $dv->setHeight( $this->CONTROL_IMAGE_HEIGHT );
+                $dv->add( new Text( "Neu", 3, true, false, false, false ) );
+                $dv->show();
+
+            }
+        }
+
+        // Existierenden Eintrag bearbeiten
+        if ( isset( $_REQUEST['editControl'] ) && strlen( $_REQUEST['editControl'] ) > 0 ) {
+            if ( !( isset( $_REQUEST['RowId'] ) && isset( $_REQUEST['Name'] ) && isset( $_REQUEST['FunkId'] ) &&
+                isset( $_REQUEST['Art'] ) ) ) {
+                $mask = $this->getEditMask( $_REQUEST['editControl'] );
+                $mask->show();
+            }
+        }
+
+    }
+
+
+    function getEtagenImage() {
+        $img = new Image( $this->getEtagenImagePath(), -1, -1, 640 );
+        return $img;
+    }
+
+    function getEtagenImagePath() {
+        $dbTable = new DbTable( $_SESSION['config']->DBCONNECT, 'homecontrol_etagen', array( "pic" ), "", "",
+            "", "id=" . $_SESSION['aktEtage'] );
+        $row = $dbTable->getRow( 1 );
+
+        return $row->getNamedAttribute( "pic" );
+
+    }
+
+
+    function showMap( $dbTable ) {
+        $bgTbl = new Table( array( "" ) );
+        $bgTbl->setOnClick( "Coords()" );
+        $bgTbl->setWidth( "640" );
+        $bgTbl->setHeight( "360" );
+        $bgTbl->setStyle( "background-image", "url(" . $this->getEtagenImagePath() . ")" );
+
+        $rowImg = $bgTbl->createRow();
+
+        $rowImg->setAttribute( 0, " " );
+        $rowImg->setPadding( "4px" );
+
+        $bgTbl->addRow( $rowImg );
+        $bgTbl->show();
+
+
+        for ( $i = 1; $i <= $dbTable->getRowCount(); $i++ ) {
+            $currConfigRow = $dbTable->getRow( $i );
+
+            $ctrlItem = new HomeControlItem( $currConfigRow, $this->EDITMODE );
+            $ctrlItem->show();
+        }
+
+        return $dbTable;
+    }
+
+
+    function showMobileView() {
+        $mobileView = $this->getMobileView();
+        $mobileView->show();
+    }
+
+
+    function getMobileView() {
+        $layoutTable = new Table( array( "" ) );
+        $layoutTable->setWidth( "98%" );
+        $this->handleEtage();
+
+        $dbTable = new DbTable( $_SESSION['config']->DBCONNECT, 'homecontrol_config', array( "id", "name",
+            "funk_id", "funk_id2", "beschreibung", "control_art", "etage", "zimmer", "x", "y" ), "", "",
+            "etage, name", "" );
+
+        $layoutRow = null;
+        $letzteEtage = "";
+
+        foreach ( $dbTable->ROWS as $row ) {
+
+            if ( $letzteEtage != $row->getNamedAttribute( "etage" ) ) {
+                $letzteEtage = $row->getNamedAttribute( "etage" );
+                $etagenName = $this->getEtagenName( $letzteEtage );
+
+                $layoutTable->addSpacer( 0, 40 );
+
+                $ttl = new Title( $etagenName, 0, 8 );
+                $ttl->setAlign( "left" );
+
+                $layoutRow = $layoutTable->createRow();
+                $layoutRow->setSpawnAll( true );
+                $layoutTable->addRow( $layoutRow );
+                $layoutRow->setAttribute( 0, $ttl );
+
+                $layoutTable->addSpacer( 0, 20 );
+            }
+
+            $layoutRow = $layoutTable->createRow();
+            $layoutTable->addRow( $layoutRow );
+
+            $hcItem = new HomeControlItem( $row, false );
+            $switchComp = $hcItem->getMobileSwitch();
+            $layoutRow->setAttribute( 0, $switchComp );
+        }
+
+        return $layoutTable;
+    }
+
+
+    function showTabletView() {
+        $tabletView = $this->getTabletView();
+        $tabletView->show();
+    }
+
+
+    function getTabletView() {
+        $colCount = 4;
+        $layoutTable = new Table( array( "", "", "", "" ) );
+        $layoutTable->setSpacing( 15 );
+
+        $this->handleEtage();
+
+        $dbTable = new DbTable( $_SESSION['config']->DBCONNECT, 'homecontrol_config', array( "id", "name",
+            "funk_id", "funk_id2", "beschreibung", "control_art", "etage", "zimmer", "x", "y" ), "", "",
+            "etage, name", "" );
+
+        $currCol = $colCount;
+        $layoutRow = null;
+        $letzteEtage = "";
+
+        foreach ( $dbTable->ROWS as $row ) {
+
+            if ( $letzteEtage != $row->getNamedAttribute( "etage" ) ) {
+                $letzteEtage = $row->getNamedAttribute( "etage" );
+                $etagenName = $this->getEtagenName( $letzteEtage );
+
+                $currCol = 0;
+
+                $layoutTable->addSpacer( 0, 25 );
+
+                $ttl = new Title( $etagenName, 0, 4 );
+                $ttl->setAlign( "left" );
+
+                $layoutRow = $layoutTable->createRow();
+                $layoutRow->setSpawnAll( true );
+                $layoutTable->addRow( $layoutRow );
+                $layoutRow->setAttribute( 0, $ttl );
+
+                $layoutRow = $layoutTable->createRow();
+                $layoutTable->addRow( $layoutRow );
+            } elseif ( $currCol == $colCount ) {
+                $currCol = 0;
+                $layoutRow = $layoutTable->createRow();
+                $layoutTable->addRow( $layoutRow );
+            }
+
+            $hcItem = new HomeControlItem( $row, false );
+            $switchComp = $hcItem->getTabletSwitch();
+            $layoutRow->setAttribute( $currCol, $switchComp );
+
+            $currCol++;
+        }
+
+        return $layoutTable;
+    }
+
+
+    function getEtagenName( $etage ) {
+        $configDb = new DbTable( $_SESSION['config']->DBCONNECT, 'homecontrol_etagen', array( "name" ), "",
+            "", "", "id=" . $etage );
+
+        $row = $configDb->getRow( 1 );
+        if ( $row != null ) {
+            return $row->getNamedAttribute( 'name' );
+        }
+
+        return "false";
+    }
+
+
+    /*
+    * Standard Anzeige
+    *
+    * Zeigt die Karte mit allen Controls an.
+    */
+    function show() {
+        $this->handleEtage();
+
+        if ( $this->LAYOUT_ART == $this->LAYOUTART_MOBILE ) {
+            $this->showMobileView();
+            return;
+        }
+
+        if ( $this->LAYOUT_ART == $this->LAYOUTART_TABLET ) {
+            $this->showTabletView();
+            return;
+        }
+
+        // ungültige Layout-Art korrigieren auf Default (Desktop)
+        $this->LAYOUT_ART = $this->LAYOUTART_DESKTOP;
+
+        $dbTable = new DbTable( $_SESSION['config']->DBCONNECT, 'homecontrol_config', array( "id", "name",
+            "funk_id", "funk_id2", "beschreibung", "control_art", "etage", "zimmer", "x", "y" ), "", "", "",
+            "etage=" . $_SESSION['aktEtage'] );
+
+        if ( $this->handleControlEdit( $dbTable ) ) {
+            $dbTable->refresh();
+        }
+
+        $navBar = $this->getNavigationBar();
+        $navBar->show();
+
+        if ( $this->EDITMODE ) {
+            echo "
 	  <script type=\"text/javascript\">
 		function Coords () {
 
@@ -649,14 +592,14 @@
 		}
       </script>
       ";
-          }
+        }
 
-          $this->showMap($dbTable);
+        $this->showMap( $dbTable );
 
-          $this->postHandleControlEdit($dbTable);
-      }
+        $this->postHandleControlEdit( $dbTable );
+    }
 
 
-  }
+}
 
 ?>

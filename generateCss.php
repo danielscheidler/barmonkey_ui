@@ -1,20 +1,20 @@
 <?php
 
 /*
-  FUNKTIONIERT NUR WENN INIT BEREITS ERFOLGT IST!!!
+FUNKTIONIERT NUR WENN INIT BEREITS ERFOLGT IST!!!
 */
 
 /**
-  margin-left: 0;
-  margin-right: 0;
-  margin-bottom: 0;
-  margin-top: 0;
-  padding-left: 0;
-  padding-right: 0;
-  padding-bottom: 0;
-  padding-top: 0;
+ * margin-left: 0;
+ * margin-right: 0;
+ * margin-bottom: 0;
+ * margin-top: 0;
+ * padding-left: 0;
+ * padding-right: 0;
+ * padding-bottom: 0;
+ * padding-top: 0;
 
-*/
+ */
 echo "
 
 <style type='text/css'>
@@ -66,10 +66,10 @@ select
 body
 {
   oncontextmenu:return false;
-  background-color:" .$COLORS['background'] .";
+  background-color:" . $COLORS['background'] . ";
   background-position:fixed;
   background-repeat:no-repeat;
-  color: " .$COLORS['text'] .";
+  color: " . $COLORS['text'] . ";
   margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px
 }
 
@@ -106,14 +106,29 @@ tr
   margin-right: 0;
   margin-bottom: 0;
   margin-top: 0;
-  
 }
 
+tr.NormalListRow1
+{
+  color: " .$COLORS['link'] .";
+  background-color:" .$COLORS['Tabelle_Hintergrund_1'] .";
+}
 
+tr.NormalListRow2
+{
+  color: " .$COLORS['link'] .";
+  background-color: " .$COLORS['Tabelle_Hintergrund_2'] .";
+}
+
+tr.HoverListRow
+{
+  color: " .$COLORS['hover'] .";
+  background-color: " .$COLORS['Tabelle_Hintergrund_Hover'] .";
+}
 
 th
 {
-  color:" .$COLORS['titel'] .";
+  color:" . $COLORS['titel'] . ";
   font-style:normal;
   font-weight:bolder;  
   image-size:100%;
@@ -179,22 +194,22 @@ a
 
 a:link 
 {
-  color:" .$COLORS['link'] .";
+  color:" . $COLORS['link'] . ";
 }
 
 a:visited 
 {
-  color:" .$COLORS['link'] .";
+  color:" . $COLORS['link'] . ";
 }
 
 a:active 
 {
-  color:" .$COLORS['link'] .";
+  color:" . $COLORS['link'] . ";
 }
 
 a:hover
 {
-  color:" .$COLORS['hover'] .";
+  color:" . $COLORS['hover'] . ";
 }
 
 
@@ -208,32 +223,31 @@ a.menulink
 
 a.menulink:link 
 {
-  color:" .$COLORS['menu'] .";
+  color:" . $COLORS['menu'] . ";
 }
 
 a.menulink:visited 
 {
-  color:" .$COLORS['menu'] .";
+  color:" . $COLORS['menu'] . ";
 }
 
 a.menulink:active 
 {
-  color:" .$COLORS['menu'] .";
+  color:" . $COLORS['menu'] . ";
 }
 
 a.menulink:hover
 {
-  color:" .$COLORS['hover'] .";
+  color:" . $COLORS['hover'] . ";
 }
 
 
 hr
 {
-  color:" .$COLORS['text'] .";
+  color:" . $COLORS['text'] . ";
 }
 
 </style>
 ";
-
 
 ?>

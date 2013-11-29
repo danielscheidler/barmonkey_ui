@@ -56,18 +56,17 @@ class Barmonkey extends Object {
      * @return DbTable
      */
     function getRezepteTbl() {
-        $rezepteTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezepte', array( "name",
-            "beschreibung", "rezept_gruppe", "pic", "vorbereitung", "nachbereitung" ),
-            "Name, Beschreibung, Kategorie, Bild, Vorbereitung, Nachbereitung", "", "",
-            "rezept_gruppe=" . $_SESSION['currentGroup'] );
+        $rezepteTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezepte', array( "name", "beschreibung",
+            "rezept_gruppe", "pic", "vorbereitung", "nachbereitung" ),
+            "Name, Beschreibung, Kategorie, Bild, Vorbereitung, Nachbereitung", "", "", "rezept_gruppe=" . $_SESSION['currentGroup'] );
 
         return $rezepteTbl;
     }
 
 
     function getFirstGroupId() {
-        $rezepteGrpDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen',
-            array( "id", "name", "beschreibung" ), "", "", "name", $this->showAll ? "" :
+        $rezepteGrpDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen', array( "id",
+            "name", "beschreibung" ), "", "", "name", $this->showAll ? "" :
             "(SELECT count('X') cnt FROM rezepte WHERE rezepte.rezept_gruppe = rezept_gruppen.id)>0" );
 
         $r = $rezepteGrpDbTbl->getRow( 1 );
@@ -101,8 +100,7 @@ class Barmonkey extends Object {
     }
 
     function isAlleRezepteAnzeigen() {
-        return isset( $_SESSION['AlleRezepteAnzeigen'] ) && $_SESSION['AlleRezepteAnzeigen'] ==
-            "J";
+        return isset( $_SESSION['AlleRezepteAnzeigen'] ) && $_SESSION['AlleRezepteAnzeigen'] == "J";
     }
 
 
@@ -122,8 +120,8 @@ class Barmonkey extends Object {
 
         $rezepteDbTbl = $this->REZEPTE_TBL;
 
-        if ( isset( $_REQUEST['DbTableUpdate' . $rezepteDbTbl->TABLENAME] ) && $_REQUEST['DbTableUpdate' .
-            $rezepteDbTbl->TABLENAME] == "Speichern" ) {
+        if ( isset( $_REQUEST['DbTableUpdate' . $rezepteDbTbl->TABLENAME] ) && $_REQUEST['DbTableUpdate' . $rezepteDbTbl->TABLENAME] ==
+            "Speichern" ) {
 
             $rezepteDbTbl->doUpdate();
         }
@@ -170,8 +168,8 @@ class Barmonkey extends Object {
 
         $urlParamName = $this->EDITMODE ? "editRezept" : "showRezept";
 
-        $rezepteGrpTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen',
-            array( "id", "name", "beschreibung" ), "", "", "", "id=" . $_SESSION['currentGroup'] );
+        $rezepteGrpTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen', array( "id", "name",
+            "beschreibung" ), "", "", "", "id=" . $_SESSION['currentGroup'] );
         echo "<center>";
 
 
@@ -194,8 +192,8 @@ class Barmonkey extends Object {
         // ---------------------
         //  Rezept Hinzufügen
         // ---------------------
-        if ( $this->EDITMODE && isset( $_REQUEST['InsertIntoDB' . $this->REZEPTE_TBL->TABLENAME] ) &&
-            $_REQUEST['InsertIntoDB' . $this->REZEPTE_TBL->TABLENAME] == "Speichern" ) {
+        if ( $this->EDITMODE && isset( $_REQUEST['InsertIntoDB' . $this->REZEPTE_TBL->TABLENAME] ) && $_REQUEST['InsertIntoDB' .
+            $this->REZEPTE_TBL->TABLENAME] == "Speichern" ) {
             $this->REZEPTE_TBL->doInsert();
 
             $this->REZEPTE = $this->getRezepte();
@@ -214,8 +212,7 @@ class Barmonkey extends Object {
         }
 
         if ( ( !isset( $_REQUEST['dbTableNewRezept'] ) ) && $this->EDITMODE ) {
-            $newRezept = $this->REZEPTE_TBL->getNewEntryButton( "Rezept Hinzufügen",
-                "Rezept" );
+            $newRezept = $this->REZEPTE_TBL->getNewEntryButton( "Rezept Hinzufügen", "Rezept" );
 
             $dvR = new Div();
             $dvR->add( $newRezept );
@@ -232,18 +229,16 @@ class Barmonkey extends Object {
 
         $cnt = 0;
         foreach ( $this->REZEPTE as $rezept ) {
-            if ( !isset( $_REQUEST[$urlParamName] ) || ( $_REQUEST[$urlParamName] == $rezept->getId
-                () ) ) {
-                $lnk = $rezept->getDetailLink( $urlParamName );
+            if ( !isset( $_REQUEST[$urlParamName] ) || ( $_REQUEST[$urlParamName] == $rezept->getId() ) ) {
+                $rowClass = "NormalListRow1"; 
+                if ( $cnt % 2 == 0 ) {
+                    $rowClass ="NormalListRow2"; 
+                } 
+
+                $lnk = $rezept->getDetailLink( $urlParamName, $rowClass );
 
                 $r = $rezeptTbl->createRow();
                 $r->setAttribute( 0, $lnk );
-                if ( $cnt % 2 == 0 ) {
-                    $r->setStyle( "background-color", "#777777" );
-                } else {
-                    $r->setStyle( "background-color", "#555555" );
-                }
-                $r->setStyle( "vertical-align", "middle" );
 
                 $rezeptTbl->addRow( $r );
 
@@ -252,8 +247,8 @@ class Barmonkey extends Object {
 
             // Falls DetailLink angeklickt wurde,
             // hier den Rezept-Editor fÃÂ¼r diesen Eintrag anzeigen
-            if ( $this->EDITMODE && ( isset( $_REQUEST['editRezept'] ) && $_REQUEST['editRezept'] ==
-                $rezept->getId() ) && $_SESSION['config']->CURRENTUSER->STATUS == "admin" ) {
+            if ( $this->EDITMODE && ( isset( $_REQUEST['editRezept'] ) && $_REQUEST['editRezept'] == $rezept->getId
+                () ) && $_SESSION['config']->CURRENTUSER->STATUS == "admin" ) {
                 $editor = $rezept->getSingleRowEditor();
                 $editor->addSpacer( 1, 5 );
 

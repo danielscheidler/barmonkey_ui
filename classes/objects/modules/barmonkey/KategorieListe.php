@@ -26,8 +26,7 @@ class KategorieListe {
     function getRezeptAnzahl( $gruppe ) {
         $ret = 0;
 
-        $sql = "SELECT count('X') cnt FROM rezepte WHERE rezept_gruppe ='" . $gruppe .
-            "'";
+        $sql = "SELECT count('X') cnt FROM rezepte WHERE rezept_gruppe ='" . $gruppe . "'";
         $rslt = $_SESSION['config']->DBCONNECT->executeQuery( $sql );
 
         if ( mysql_numrows( $rslt ) > 0 ) {
@@ -66,16 +65,15 @@ class KategorieListe {
         $ttl = new Title( "Kategorien", 0, 5 );
         $ttl->show();
 
-        $rezepteGrpDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen',
-            array( "id", "name", "beschreibung" ), "", "", "name", $this->showAll ? "" :
+        $rezepteGrpDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen', array( "id",
+            "name", "beschreibung" ), "", "", "name", $this->showAll ? "" :
             "(SELECT count('X') cnt FROM rezepte WHERE rezepte.rezept_gruppe = rezept_gruppen.id)>0" );
 
-        $tblGrp = new Table( array( "", "" ) );
+        $tblGrp = new Table( array( "" ) );
 
         if ( $this->isShowSwitchAllLink() ) {
             $switchLinkRow = $tblGrp->createRow();
             $switchLinkRow->setAlign( "right" );
-            $switchLinkRow->setSpawnAll( true );
             $switchLinkRow->setHeight( "20px" );
             $switchLinkRow->setAttribute( 0, $this->getShowAllSwitchLink() );
             $tblGrp->addRow( $switchLinkRow );
@@ -85,9 +83,11 @@ class KategorieListe {
         $cnt = 0;
 
         foreach ( $rezepteGrpDbTbl->ROWS as $grpRow ) {
+            $tblGrpInner = new Table( array( "", "" ) );
+            $tblGrpInner->setColSizes(array(null,20));
             $txt = new Text( $grpRow->getNamedAttribute( "name" ), 4 );
-            $lnk = new Link( "?changeGroup=" . $grpRow->getNamedAttribute( "id" ), $txt );
-            $r = $tblGrp->createRow();
+            $r = $tblGrpInner->createRow();
+
             $r->setHeight( "40" );
             $r->setAlignments( array( "left", "center" ) );
 
@@ -96,23 +96,32 @@ class KategorieListe {
             $r->setStyle( "padding-right", "5px" );
             $r->setStyle( "opacity", "0.9" );
             $r->setStyle( "-moz-opacity", "0.9" );
-            $r->setStyle( "-ms-filter",
-                "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)" );
+            $r->setStyle( "-ms-filter", "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)" );
             $r->setStyle( "filter", "alpha(opacity=80);" );
 
             if ( $cnt % 2 == 0 ) {
-                $r->setStyle( "background-color", "#777777" );
+                $r->setClass("NormalListRow1");
+                $r->setMouseOver("this.className='HoverListRow'");
+                $r->setMouseOut("this.className='NormalListRow1'");
+            
             } else {
-                $r->setStyle( "background-color", "#555555" );
+                $r->setClass("NormalListRow2");
+                $r->setMouseOver("this.className='HoverListRow'");
+                $r->setMouseOut("this.className='NormalListRow2'");
+                
             }
 
-            $r->setAttribute( 0, $lnk );
-            $r->setAttribute( 1, new Text( "(" . $this->getRezeptAnzahl( $grpRow->getNamedAttribute
-                ( "id" ) ) . ")", 2, false, true ) );
+            $r->setAttribute( 0, $txt );
+            $r->setAttribute( 1, new Text( "(" . $this->getRezeptAnzahl( $grpRow->getNamedAttribute( "id" ) ) .
+                ")", 2, false, true ) );
 
 
-            $tblGrp->addRow( $r );
-
+            $tblGrpInner->addRow( $r );
+            
+            $rFull = $tblGrp->createRow();
+            $rFull->setAttribute(0, new Link( "?changeGroup=" . $grpRow->getNamedAttribute( "id" ), $tblGrpInner ));
+            $tblGrp->addRow($rFull);
+            
             $cnt++;
         }
 

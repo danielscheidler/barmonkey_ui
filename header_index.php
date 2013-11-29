@@ -1,6 +1,6 @@
 <?php
-  
-  echo "<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='de' lang='de'>
+
+echo "<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='de' lang='de'>
         <meta http-equiv='content-type' content='text/html; charset=utf-8' />
 	 	<head>
   ";
@@ -9,16 +9,20 @@
 //          <script src='AC_RunActiveContent.js' language='javascript'></script>
 //          <script type='text/javascript' src='scripts/swfobject.js'></script>
 
-  include_once("generateCss.php"); 
+include_once ( "generateCss.php" );
 
 //  <META NAME=ÃÂGOOGLEBOTÃÂ CONTENT=ÃÂunavailable_after: 25-Aug-2007 15:00:00 GMTÃÂ>
 
-  echo "
+echo "
      <!-- Inhaltsangaben / Inhaber  -->
-          <meta name='description' content='" .htmlspecialchars($PUBLICVARS['pagetitel'], ENT_QUOTES ) ." " .htmlspecialchars($PUBLICVARS['suchbegriffe'], ENT_QUOTES ) ." '>
-          <meta name='author' content='".getPageConfigParam($_SESSION['config']->DBCONNECT, "pageowner")."' >
+          <meta name='description' content='" . htmlspecialchars( $PUBLICVARS['pagetitel'],
+    ENT_QUOTES ) . " " . htmlspecialchars( $PUBLICVARS['suchbegriffe'], ENT_QUOTES ) . " '>
+          <meta name='author' content='" . getPageConfigParam( $_SESSION['config']->DBCONNECT,
+    "pageowner" ) . "' >
 	   <meta name='page-topic' Content='Dienstleistung, Internet'>
-	   <meta name='keywords' lang='de' content='" .htmlspecialchars($PUBLICVARS['pagetitel'], ENT_QUOTES ) ." " .htmlspecialchars($PUBLICVARS['suchbegriffe'], ENT_QUOTES ) ." Daniel Scheidler '>      
+	   <meta name='keywords' lang='de' content='" . htmlspecialchars( $PUBLICVARS['pagetitel'],
+    ENT_QUOTES ) . " " . htmlspecialchars( $PUBLICVARS['suchbegriffe'], ENT_QUOTES ) .
+    " Daniel Scheidler '>      
           <meta name='audience' Content='Zielgruppe'>
           <meta name='publisher' content='d.scheidler@web.de'>
           
@@ -28,21 +32,20 @@
           <meta name='copyright' content='d.scheidler@web.de'>
 ";
 
-$default_title  = $PUBLICVARS['pagetitel'];
+$default_title = $PUBLICVARS['pagetitel'];
 $currRunLnkName = getTextByRunlink( $_SESSION['runLink'] );
 
-$sub_title      = isset($PUBLICVARS['pagesubtitel'])?$PUBLICVARS['pagesubtitel']:"";
+$sub_title = isset( $PUBLICVARS['pagesubtitel'] ) ? $PUBLICVARS['pagesubtitel'] : "";
 
-$ttl = strlen($currRunLnkName)>0 ?
-            ( $PUBLICVARS['pagetitel'] ." - " .$currRunLnkName) :  $PUBLICVARS['pagetitel']   ;
+$ttl = strlen( $currRunLnkName ) > 0 ? ( $PUBLICVARS['pagetitel'] . " - " . $currRunLnkName ) : $PUBLICVARS['pagetitel'];
 
-echo "<title> " .$ttl."  </title>";
+echo "<title> " . $ttl . "  </title>";
 
 
 $detect = new Mobile_Detect();
 
-if (!$detect->isMobile()) {
-  echo "   
+if ( !$detect->isMobile() ) {
+    echo "   
     <!-- CK Editor  -->
         	<script type=\"text/javascript\" src=\"ckeditor/ckeditor.js\"></script>
         	<script src=\"ckeditor/ckedit_cbo.js\" type=\"text/javascript\"></script>
@@ -80,8 +83,8 @@ echo "
         <script type=\"text/javascript\" src=\"scripts/changeValue.js\"></script>
   ";
 
-if (!$detect->isMobile()) {
-  echo "
+if ( !$detect->isMobile() ) {
+    echo "
   	<div id=\"alerts\">
 		<noscript>
 			<p>
@@ -92,32 +95,21 @@ if (!$detect->isMobile()) {
 		</noscript>
 	</div>
 
-  ";  
+  ";
 }
 
 
+function getTextByRunlink( $id ) {
 
+    $sql = "SELECT * FROM menu WHERE (link LIKE '%run=" . $id . "%') ";
+    $result = $_SESSION['config']->DBCONNECT->executeQuery( $sql );
 
-
-
-
-
-
-
-
-
-  function getTextByRunlink($id){
-
-    $sql = "SELECT * FROM menu WHERE (link LIKE '%run=" .$id ."%') ";
-    $result = $_SESSION['config']->DBCONNECT->executeQuery($sql);
-
-    if(mysql_num_rows($result)>0){
-      $r = mysql_fetch_array($result);
-      return $r['text'];
+    if ( mysql_num_rows( $result ) > 0 ) {
+        $r = mysql_fetch_array( $result );
+        return $r['text'];
     }
 
     return "";
-  }
-
+}
 
 ?>

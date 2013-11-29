@@ -6,22 +6,22 @@
  */
 
 
-class Spacer extends Object{
-	
-	function Spacer($h = "20"){
-		$this->setHeight($h);
-	}
-	
-	function show(){
-		$t = new Table(array());
-              $t->STYLEATTRS = $this->STYLEATTRS;
-		$t->setHeight($this->getHeight());
-		$r = $t->createRow();
-		$r->setHeight($this->getHeight());
-		$t->addRow($r);
-		$t->show();
-	}
-	
+class Spacer extends Object {
+
+    function Spacer( $h = "20" ) {
+        $this->setHeight( $h );
+    }
+
+    function show() {
+        $t = new Table( array() );
+        $t->STYLEATTRS = $this->STYLEATTRS;
+        $t->setHeight( $this->getHeight() );
+        $r = $t->createRow();
+        $r->setHeight( $this->getHeight() );
+        $t->addRow( $r );
+        $t->show();
+    }
+
 }
 
 ?>

@@ -1,12 +1,13 @@
 <?php
-  include_once("init.php"); 
 
-  echo "
+include_once ( "init.php" );
+
+echo "
 	<html>
  	  <head>
   ";
 
-  include_once("generateCss.php"); 
+include_once ( "generateCss.php" );
 
 
 //  <META NAME=ÃÂÃÂGOOGLEBOTÃÂÃÂ CONTENT=ÃÂÃÂunavailable_after: 25-Aug-2007 15:00:00 GMTÃÂÃÂ>
@@ -16,7 +17,8 @@ echo "	  <script type=\"text/javascript\" src=\"scripts/swfobject.js\"></script>
      <!-- Inhaltsangaben / Inhaber  -->
 	      <meta name='author' content='' >
 		  <meta name='page-topic' Content='Dienstleistung, Internet'>
-		  <meta name='keywords' lang='de' content='" .htmlspecialchars($PUBLICVARS['pagetitel'], ENT_QUOTES ) ." Daniel Scheidler '>      
+		  <meta name='keywords' lang='de' content='" . htmlspecialchars( $PUBLICVARS['pagetitel'],
+    ENT_QUOTES ) . " Daniel Scheidler '>      
           <meta name='audience' Content='Zielgruppe'>
           <meta name='publisher' content='@'>
             
@@ -40,8 +42,8 @@ echo "	  <script type=\"text/javascript\" src=\"scripts/swfobject.js\"></script>
           <meta name='copyright' content='d.scheidler@web.de'>
 ";
 
-	
-echo "<title> " .$PUBLICVARS['pagetitel'] ."  </title>
+
+echo "<title> " . $PUBLICVARS['pagetitel'] . "  </title>
 ";
 
 
@@ -49,10 +51,10 @@ echo "
           </head>
           <body class='indexbody' ";
 
-if(!isset($_REQUEST['stayAlive'])){
-	echo " onblur='self.close();' ";
-}	  
-		  
+if ( !isset( $_REQUEST['stayAlive'] ) ) {
+    echo " onblur='self.close();' ";
+}
+
 echo ">
 
 
@@ -62,7 +64,6 @@ echo ">
 		  <script type=\"text/javascript\" src=\"scripts/popup.js\"></script>
 	      
 
-  ";  
-
+  ";
 
 ?>
