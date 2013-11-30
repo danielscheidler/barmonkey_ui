@@ -25,6 +25,11 @@ class Barmonkey extends Object {
     private $VERFUEGBARE_REZEPTE;
     private $EDITMODE;
 
+
+    private $MENUE_ART_ZUTATEN = "zutaten";
+    private $MENUE_ART_REZEPTGRUPPEN = "rezeptgruppen";
+
+
     /**
      * Barmonkey::Barmonkey()
      * 
@@ -56,9 +61,18 @@ class Barmonkey extends Object {
      * @return DbTable
      */
     function getRezepteTbl() {
+        $where = "rezept_gruppe=" . $_SESSION['currentGroup'];
+        if ( $_SESSION['MenueArt'] == $this->MENUE_ART_ZUTATEN ) {
+            $where = "exists (SELECT 'X' FROM zutaten_zuordnung zz WHERE zz.zutat_id=" . $_SESSION['currentGroup'] .
+                " AND zz.rezept_id = rezepte.id)";
+        }
+
         $rezepteTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezepte', array( "name", "beschreibung",
-            "rezept_gruppe", "pic", "vorbereitung", "nachbereitung" ),
-            "Name, Beschreibung, Kategorie, Bild, Vorbereitung, Nachbereitung", "", "", "rezept_gruppe=" . $_SESSION['currentGroup'] );
+            "rezept_gruppe", "pic", "vorbereitung", "nachbereitung",
+            "(round((SELECT sum(menge) FROM zutaten_zuordnung zz WHERE zz.rezept_id = rezepte.id AND exists(SELECT 'x' FROM anschluesse WHERE zutat_id = zz.zutat_id) )/(SELECT sum(menge) FROM zutaten_zuordnung zz WHERE zz.rezept_id = rezepte.id)*100)) abfuellbar",
+            "if((round((SELECT sum(menge) FROM zutaten_zuordnung zz WHERE zz.rezept_id = rezepte.id AND exists(SELECT 'x' FROM anschluesse WHERE zutat_id = zz.zutat_id) )/(SELECT sum(menge) FROM zutaten_zuordnung zz WHERE zz.rezept_id = rezepte.id)*100)) = 100, 0, 1) ordernr" ),
+            "Name, Beschreibung, Kategorie, Bild, Vorbereitung, Nachbereitung, Abfüllbar", "", "ordernr, name",
+            $where );
 
         return $rezepteTbl;
     }
@@ -168,26 +182,42 @@ class Barmonkey extends Object {
 
         $urlParamName = $this->EDITMODE ? "editRezept" : "showRezept";
 
-        $rezepteGrpTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen', array( "id", "name",
-            "beschreibung" ), "", "", "", "id=" . $_SESSION['currentGroup'] );
         echo "<center>";
 
 
         // ---------------------
         // Kategorie anzeigen
         // ---------------------
-        if ( $rezepteGrpTbl->getRowcount() > 0 ) {
-            $name = $rezepteGrpTbl->getRow( 1 )->getNamedAttribute( "name" );
-            $beschreibung = $rezepteGrpTbl->getRow( 1 )->getNamedAttribute( "beschreibung" );
-            $ttl = new Title( $name, 0, 5 );
-            $ttl->show();
+        if ( $_SESSION['MenueArt'] == $this->MENUE_ART_REZEPTGRUPPEN ) {
+            $rezepteGrpTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen', array( "id", "name",
+                "beschreibung" ), "", "", "", "id=" . $_SESSION['currentGroup'] );
 
-            $txt = new Text( $beschreibung, 2 );
-            $txt->show();
+            if ( $rezepteGrpTbl->getRowcount() > 0 ) {
+                $name = $rezepteGrpTbl->getRow( 1 )->getNamedAttribute( "name" );
+                $beschreibung = $rezepteGrpTbl->getRow( 1 )->getNamedAttribute( "beschreibung" );
+                $ttl = new Title( $name, 0, 5 );
+                $ttl->show();
+
+                $txt = new Text( $beschreibung, 2 );
+                $txt->show();
 
 
-        }
+            }
+        } else
+            if ( $_SESSION['MenueArt'] == $this->MENUE_ART_ZUTATEN ) {
+                $rezepteGrpTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'zutaten', array( "id", "name",
+                    "beschreibung" ), "", "", "", "id=" . $_SESSION['currentGroup'] );
 
+                if ( $rezepteGrpTbl->getRowcount() > 0 ) {
+                    $name = $rezepteGrpTbl->getRow( 1 )->getNamedAttribute( "name" );
+                    $beschreibung = $rezepteGrpTbl->getRow( 1 )->getNamedAttribute( "beschreibung" );
+                    $ttl = new Title( $name, 0, 5 );
+                    $ttl->show();
+
+                    $txt = new Text( $beschreibung, 2 );
+                    $txt->show();
+                }
+            }
 
         // ---------------------
         //  Rezept Hinzufügen
@@ -230,10 +260,10 @@ class Barmonkey extends Object {
         $cnt = 0;
         foreach ( $this->REZEPTE as $rezept ) {
             if ( !isset( $_REQUEST[$urlParamName] ) || ( $_REQUEST[$urlParamName] == $rezept->getId() ) ) {
-                $rowClass = "NormalListRow1"; 
+                $rowClass = "NormalListRow1";
                 if ( $cnt % 2 == 0 ) {
-                    $rowClass ="NormalListRow2"; 
-                } 
+                    $rowClass = "NormalListRow2";
+                }
 
                 $lnk = $rezept->getDetailLink( $urlParamName, $rowClass );
 

@@ -156,8 +156,10 @@ class Rezept extends Object {
         $zutatenDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'zutaten', array( "id", "name",
             "beschreibung", "prozente", "cl_preis", "manuell",
             "(select menge from zutaten_zuordnung  WHERE zutaten.id = zutaten_zuordnung.zutat_id " .
-            "AND zutaten_zuordnung.rezept_id=" . $this->getId() . ") menge " ),
-            "Name, Prozente, Preis je cl, Nur Manuell", "", "manuell",
+            "AND zutaten_zuordnung.rezept_id=" . $this->getId() . ") menge ",
+            "(SELECT COUNT('X') FROM zutaten_zuordnung zz WHERE zz.zutat_id = zutaten.id) anzahl",
+            "(SELECT  'JA' FROM anschluesse a WHERE a.zutat_id = zutaten.id) angeschlossen" ),
+            "Name, Prozente, Preis je cl, Nur Manuell, Menge, in Rezepten", "", "manuell",
             "exists(SELECT 'x' FROM zutaten_zuordnung WHERE " . "zutaten.id = zutaten_zuordnung.zutat_id " .
             "AND zutaten_zuordnung.rezept_id=" . $this->getId() . ") " );
 
@@ -168,6 +170,7 @@ class Rezept extends Object {
 
         $this->ZUTATEN = $ret;
     }
+
 
 
     /**
@@ -278,7 +281,8 @@ class Rezept extends Object {
         $manuell = false;
         foreach ( $zutaten as $zutat ) {
             $r = $tbl->createRow();
-
+            $r->setVAlign("middle");
+            
             // Manuell?
             if ( $zutat->isManuell() ) {
                 $r->setBackgroundColor( '#ff7777' );
@@ -309,13 +313,7 @@ class Rezept extends Object {
             $tbl->addRow( $r );
         }
 
-        if ( $manuell ) {
-            $r = $tbl->createRow();
-            $r->setSpawnAll( true );
-            $r->setAttribute( 0, new Text( "(Rot hinterlegte Zutaten sind nicht automatisch verwendbar.<br>Orange sind nicht angeschlossen.)",
-                1, false, true, false, false ) );
-            $tbl->addRow( $r );
-        }
+        
 
         $ret->add( $tbl );
 
@@ -389,20 +387,20 @@ class Rezept extends Object {
      * @param string $urlParamName
      * @return Table
      */
-    function getDetailLink( $urlParamName = "showRezept" , $className="NormalListRow1") {
+    function getDetailLink( $urlParamName = "showRezept", $className = "NormalListRow1" ) {
         $ttl = new Text( $this->getName(), 4 );
 
         $tbl = new Table( array( "", "", "", "" ) );
-        $tbl->setPadding(5);
+        $tbl->setPadding( 5 );
 
         $tbl->setColSizes( array( 90, 5, 280 ) );
         $tbl->setStyle( "padding-left", "15px" );
         $tbl->setStyle( "padding-right", "15px" );
 
         $rowTtl = $tbl->createRow();
-        $rowTtl->setClass($className);
-        $rowTtl->setMouseOver("this.className='HoverListRow'");
-        $rowTtl->setMouseOut("this.className='".$className."'");
+        $rowTtl->setClass( $className );
+        $rowTtl->setMouseOver( "this.className='HoverListRow'" );
+        $rowTtl->setMouseOut( "this.className='" . $className . "'" );
 
         $rowTtl->setStyle( "vertical-align", "middle" );
         $img = $this->getImage();
@@ -515,7 +513,9 @@ class Rezept extends Object {
         $tblPrepareBtn->addRow( $rowPrepare );
 
         $CancleLnk = new Link( "?showRezept=" . $this->getId() . "&starteZubereitung=" . $this->getId() .
-            "&VorbereitungPruefen=" . $this->getId(), $tblPrepareBtn, false, "", "document.arduinoSwitch.location.href='http://" .$_SESSION['config']->PUBLICVARS['arduino_url']."/zubereiten?RezeptId=".$this->getId() ."';" );
+            "&VorbereitungPruefen=" . $this->getId(), $tblPrepareBtn, false, "",
+            "document.arduinoSwitch.location.href='http://" . $_SESSION['config']->PUBLICVARS['arduino_url'] .
+            "/zubereiten?RezeptId=" . $this->getId() . "';" );
 
         return $CancleLnk;
     }
@@ -553,19 +553,32 @@ class Rezept extends Object {
      */
     function starteZubereitung() {
 
-        // Vorbereiten
+
         $tbl = new Table( array( "", "" ) );
-        $tbl->setColSizes( array( 150 ) );
+        $tbl->setColSizes( array( 180 ) );
         $tbl->setAlignments( array( "left", "right" ) );
 
+
         // Name
-        $ttl = new Title( $this->getName() . " abgefüllt", 0, 5 );
+        $ttl = new Title( $this->getName(), 0, 5 );
         $rowTtl = $tbl->createRow();
         $rowTtl->setSpawnAll( true );
         $rowTtl->setAttribute( 0, $ttl );
         $tbl->addRow( $rowTtl );
 
         $tbl->addSpacer( 1, 24 );
+
+        // Bild und Zutaten
+        $img = $this->getImage();
+        $img->setWidth( 170 );
+        $zutatenListe = $this->getZutatenListe();
+        $rowImgZutaten = $tbl->createRow();
+        $rowImgZutaten->setAttribute( 0, $img );
+        $rowImgZutaten->setAttribute( 1, $zutatenListe );
+        $tbl->addRow( $rowImgZutaten );
+
+        $tbl->addSpacer( 0, 5 );
+
 
         // Nachbereitung
         $rowNachbereitungTtl = $tbl->createRow();
@@ -642,19 +655,32 @@ class Rezept extends Object {
             }
         }
 
-        // Vorbereiten
+
         $tbl = new Table( array( "", "" ) );
-        $tbl->setColSizes( array( 150 ) );
+        $tbl->setColSizes( array( 180 ) );
         $tbl->setAlignments( array( "left", "right" ) );
 
+
         // Name
-        $ttl = new Title( $this->getName() . " zubereiten", 0, 5 );
+        $ttl = new Title( $this->getName(), 0, 5 );
         $rowTtl = $tbl->createRow();
         $rowTtl->setSpawnAll( true );
         $rowTtl->setAttribute( 0, $ttl );
         $tbl->addRow( $rowTtl );
 
         $tbl->addSpacer( 1, 24 );
+
+        // Bild und Zutaten
+        $img = $this->getImage();
+        $img->setWidth( 170 );
+        $zutatenListe = $this->getZutatenListe();
+        $rowImgZutaten = $tbl->createRow();
+        $rowImgZutaten->setAttribute( 0, $img );
+        $rowImgZutaten->setAttribute( 1, $zutatenListe );
+        $tbl->addRow( $rowImgZutaten );
+
+        $tbl->addSpacer( 0, 5 );
+
 
         // Preis
         $rowPreis = $tbl->createRow();

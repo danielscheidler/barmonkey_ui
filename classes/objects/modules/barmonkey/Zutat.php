@@ -142,6 +142,7 @@ class Zutat extends Object {
         return $tbl;
     }
 
+
     /**
      * Zutat::show()
      * 

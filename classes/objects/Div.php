@@ -177,6 +177,8 @@ class Div extends Object {
 
         echo "<div ";
 
+        echo $this->getClassTag();
+
         if ( $this->ID != "" ) {
             echo " id=" . $this->ID . " ";
         }
@@ -225,6 +227,8 @@ class DivByInclude extends Div {
     function show() {
         echo "<div ";
 
+        echo $this->getClassTag();
+        
         if ( $this->XPOS > 0 || $this->YPOS > 0 ) {
             $tmp = ":absolute; ";
             if ( $this->YPOS > 0 ) {

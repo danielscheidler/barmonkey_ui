@@ -247,6 +247,8 @@ hr
   color:" . $COLORS['text'] . ";
 }
 
+
+
 </style>
 ";
 

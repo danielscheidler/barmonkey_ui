@@ -82,6 +82,14 @@ echo "
        <!-- Werte von Objekten ÃÂ¤ndern (value von Text bzw Hidden-Field ) -->	      
         <script type=\"text/javascript\" src=\"scripts/changeValue.js\"></script>
   ";
+  
+  
+  
+$txt = new Text("&nbsp;<font color='red'> ROT </font> markiertes kann aus technischen Gruenden nicht abgefuellt werden. &nbsp;&nbsp;&nbsp;"
+               ."&nbsp;<font color='orange'> ORANGE </font> markiertes ist derzeit nicht angeschlossen.<br>",1,false, false, false, false);
+
+$txt->show();
+
 
 if ( !$detect->isMobile() ) {
     echo "

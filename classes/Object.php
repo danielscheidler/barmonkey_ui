@@ -275,7 +275,7 @@ class Object extends Style {
   function getClassTag(){
   	
   	if(strlen($this->STYLECLASS)>0){
-  	  return" Class='" .$this->STYLECLASS ."' ";
+  	  return " Class='" .$this->STYLECLASS ."' ";
 	}
 	
 	return "";

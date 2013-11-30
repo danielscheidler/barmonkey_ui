@@ -10,6 +10,10 @@
 $_SESSION['mainpanelwidth'] = 660;
 $_SESSION['grouppanelwidth'] = 230;
 
+$MENUE_ART_ZUTATEN = "zutaten";
+$MENUE_ART_REZEPTGRUPPEN = "rezeptgruppen";
+
+
 $layoutTable = new Table( array( "", "" ) );
 $layoutTable->setAlign( "center" );
 $layoutTable->setBORDER( 0 );
@@ -28,7 +32,7 @@ $headerLayoutRow = $layoutTable->createRow();
 $headerLayoutRow->setSpawnAll( true );
 
 $tblHead = new Table( array( "", "", "" ) );
-$tblHead->setPadding(5);
+$tblHead->setPadding( 5 );
 $tblHead->setAlignments( array( "left", "center", "right" ) );
 $tblHead->setColSizes( array( "250", null, "250" ) );
 $rHead = $tblHead->createRow();
@@ -42,7 +46,6 @@ $layoutTable->addRow( $headerLayoutRow );
 $layoutTable->addSpacer( 1, 0 );
 
 
-
 $layoutTable->addSpacer( 0, 20 );
 
 /* ------------------------------------
@@ -50,6 +53,12 @@ HAUPTPANEL
 ------------------------------------ */
 $GrpPanel = new DivByInclude( getRunlinkParam( $_SESSION['config']->DBCONNECT, "rezeptgruppen",
     "link" ), false );
+
+if ( $_SESSION['MenueArt'] == $MENUE_ART_ZUTATEN ) {
+    $GrpPanel = new DivByInclude( getRunlinkParam( $_SESSION['config']->DBCONNECT, "zutatenliste",
+        "link" ), false );
+}
+
 $GrpPanel->setBackgroundColor( $_SESSION['config']->COLORS['panel_background'] );
 $GrpPanel->setBorder( 0 );
 $GrpPanel->setOverflow( "auto" );
@@ -69,7 +78,7 @@ $layoutTable->addRow( $contentLayoutRow );
 /* --------------------------------- */
 
 
-$layoutTable->addSpacer(0,35);
+$layoutTable->addSpacer( 0, 35 );
 
 /* ------------------------------------
 FUSS-MENU 
@@ -110,7 +119,7 @@ $t = new Text( "Arduino URL: " . $_SESSION['config']->PUBLICVARS['arduino_url'] 
     "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", 2, false, true, false, false );
 $t2 = new Text( "( " . $_SESSION['aktiveRezeptAnzahl'] . " von insgesamt " . $_SESSION['rezeptAnzahl'] .
     " Rezepten. )", 2, false, true, false, false );
-$arduinoFrame = new IFrame( $_SESSION['config'], "arduinoSwitch", -1, -1, 1, 1);
+$arduinoFrame = new IFrame( $_SESSION['config'], "arduinoSwitch", -1, -1, 1, 1 );
 
 $tblFoot = new Table( array( "", "", "" ) );
 

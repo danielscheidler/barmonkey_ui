@@ -116,6 +116,19 @@ if ( strlen( $run ) > 0 ) {
 }
 
 
+// Auswahl welches Seitenmenü (Zutaten oder Rezeptgruppen)
+// verwendet werden soll
+if(isset($_REQUEST['katListChng'])){
+ if($_REQUEST['katListChng'] == "rezeptgruppen"){
+    $_SESSION['MenueArt'] = "rezeptgruppen";
+ } 
+ if($_REQUEST['katListChng'] == "zutaten"){
+    $_SESSION['MenueArt'] = "zutaten";
+ }          
+} 
+
+
+
 include ( "header_index.php" );
 
 include ( "layout.php" );

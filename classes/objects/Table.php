@@ -350,7 +350,7 @@ class Table extends Object {
 			  ";
             for ( $i = 0; $i < count( $this->COLNAMES ); $i++ ) {
                 echo "
-			         <th style=\"padding-right:2px;padding-left:2px;\"";
+			         <th height=20 style=\"padding-right:2px;padding-left:2px;\"";
 
 
                 if ( count( $this->ALIGNMENTS ) > 0 ) {

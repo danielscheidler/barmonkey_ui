@@ -1,16 +1,16 @@
 <?PHP
 
 /**
- * KategorieListe des Barmonkey
+ * ZutatenListe des Barmonkey
  * 
  * Oktober 2013     by Daniel Scheidler
  */
 
-class KategorieListe {
+class ZutatenListe {
     private $showAll = false;
     private $showSwitchAllLink = true;
 
-    function KategorieListe( $showAllKategories = false, $switchAllLink = true ) {
+    function ZutatenListe( $showAllKategories = false, $switchAllLink = true ) {
         $this->showAll = $showAllKategories;
         $this->showSwitchAllLink = $switchAllLink;
 
@@ -23,19 +23,6 @@ class KategorieListe {
         }
     }
 
-    function getRezeptAnzahl( $gruppe ) {
-        $ret = 0;
-
-        $sql = "SELECT count('X') cnt FROM rezepte WHERE rezept_gruppe ='" . $gruppe . "'";
-        $rslt = $_SESSION['config']->DBCONNECT->executeQuery( $sql );
-
-        if ( mysql_numrows( $rslt ) > 0 ) {
-            $countRow = mysql_fetch_array( $rslt );
-            $ret = $countRow['cnt'];
-        }
-
-        return $ret;
-    }
 
     function isShowSwitchAllLink() {
         return $this->showSwitchAllLink;
@@ -47,29 +34,41 @@ class KategorieListe {
 
     function getShowAllSwitchLink() {
         $lnk = "";
-        $text = "Leere Kategorien ausblenden";
+        $text = "Nur verwendete Zutaten anzeigen";
 
 
         if ( $this->showAll ) {
             $lnk = "?katListAll=off";
         } else {
             $lnk = "?katListAll=on";
-            $text = "Leere Kategorien einblenden";
+            $text = "Alle Zutaten anzeigen";
         }
         $lnk = new Link( $lnk, $text );
         return $lnk;
     }
 
 
+    // TODO: Link einbauen für $_SESSION['MenueArt'] *
     function show() {
-        $ttl = new Title( "Kategorien", 0, 5 );
 
-        $headLink = new Link( "?katListChng=zutaten", $ttl );
+        $ttl = new Title( "Zutaten", 0, 5 );
+
+        $headLink = new Link( "?katListChng=rezeptgruppen", $ttl );
         $headLink->show();
 
-        $rezepteGrpDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'rezept_gruppen', array( "id",
-            "name", "beschreibung" ), "", "", "name", $this->showAll ? "" :
-            "(SELECT count('X') cnt FROM rezepte WHERE rezepte.rezept_gruppe = rezept_gruppen.id)>0" );
+        $where = "";
+        $orderBy = "anzahl DESC, name";
+        if ( !$this->showAll ) {
+            $orderBy = "name";
+            $where = "(SELECT COUNT('X') FROM zutaten_zuordnung zz WHERE zz.zutat_id = zutaten.id) > 0 OR zutaten.manuell='J' ";
+                // AND ('JA'=(SELECT 'J' FROM anschluesse a WHERE a.zutat_id = zutaten.id))
+        }
+        
+        $zutatenDbTbl = new DbTable( $_SESSION['config']->DBCONNECT, 'zutaten', array( "id", "name",
+            "beschreibung", "prozente", "cl_preis", "manuell",
+            "(SELECT COUNT('X') FROM zutaten_zuordnung zz WHERE zz.zutat_id = zutaten.id) anzahl",
+            "(SELECT  'J' FROM anschluesse a WHERE a.zutat_id = zutaten.id) angeschlossen" ),
+            "Name, Prozente, Preis je cl, Nur Manuell, Menge, in Rezepten", "", $orderBy, $where );
 
         $tblGrp = new Table( array( "" ) );
 
@@ -84,10 +83,16 @@ class KategorieListe {
         $tblGrp->addSpacer( 1, 4 );
         $cnt = 0;
 
-        foreach ( $rezepteGrpDbTbl->ROWS as $grpRow ) {
-            $tblGrpInner = new Table( array( "", "" ) );
-            $tblGrpInner->setColSizes( array( null, 20 ) );
+        foreach ( $zutatenDbTbl->ROWS as $grpRow ) {
+            $tblGrpInner = new Table( array( "", "", "" ) );
+            $tblGrpInner->setColSizes( array( null, 40, 20 ) );
             $txt = new Text( $grpRow->getNamedAttribute( "name" ), 4 );
+            if($grpRow->getNamedAttribute( "angeschlossen" )!="J" ){
+                $txt->setColor("orange");
+            }
+            if($grpRow->getNamedAttribute( "manuell" )=="J" ){
+                $txt->setColor("red");
+            }
             $r = $tblGrpInner->createRow();
 
             $r->setHeight( "40" );
@@ -113,9 +118,14 @@ class KategorieListe {
 
             }
 
+            $prz = new Text( $grpRow->getNamedAttribute( "prozente" ) . "%", 2, false, true );
+            if ( $grpRow->getNamedAttribute( "prozente" ) == 0 ) {
+                $prz = " ";
+            }
+
             $r->setAttribute( 0, $txt );
-            $r->setAttribute( 1, new Text( "(" . $this->getRezeptAnzahl( $grpRow->getNamedAttribute( "id" ) ) .
-                ")", 2, false, true ) );
+            $r->setAttribute( 1, $prz );
+            $r->setAttribute( 2, new Text( "(" . $grpRow->getNamedAttribute( "anzahl" ) . ")", 2, false, true ) );
 
 
             $tblGrpInner->addRow( $r );
@@ -128,7 +138,6 @@ class KategorieListe {
         }
 
         $tblGrp->addSpacer( 1, 4 );
-
         $tblGrp->show();
     }
 }
